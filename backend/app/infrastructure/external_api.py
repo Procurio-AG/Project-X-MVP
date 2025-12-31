@@ -25,8 +25,20 @@ class SportMonksAPI:
         Useful if you need schedule + live data.
         """
         url = f"{self.base_url}/livescores"
-        params = {"api_token": self.api_token, "include": "localteam,visitorteam"}
+        params = {"api_token": self.api_token,
+                   "include": "localteam,visitorteam,runs"}
 
+        async with httpx.AsyncClient(timeout=10) as client:
+            response = await client.get(url, params=params)
+            response.raise_for_status()
+            return response.json()
+        
+    async def fetch_match_by_id_raw(self, match_id: str) -> dict:
+        url = f"{self.base_url}/fixtures/{match_id}"
+        params = {
+            "api_token": self.api_token,
+            "include": "localteam,visitorteam,runs,venue"
+        }
         async with httpx.AsyncClient(timeout=10) as client:
             response = await client.get(url, params=params)
             response.raise_for_status()
