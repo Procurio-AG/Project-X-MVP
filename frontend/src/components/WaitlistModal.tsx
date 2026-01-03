@@ -18,18 +18,45 @@ export default function WaitlistModal({ open, onOpenChange }: WaitlistModalProps
     if (!email) return;
 
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "You're on the list!",
-      description: "We'll notify you when STRYKER launches.",
-    });
-    
-    setEmail("");
-    setIsSubmitting(false);
-    onOpenChange(false);
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/waitlist/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (res.status === 201) {
+        toast({
+          title: "You're on the list!",
+          description: "We'll notify you when STRYKER launches.",
+        });
+
+        setEmail("");
+        onOpenChange(false);
+      } else if (res.status === 409) {
+        toast({
+          title: "Already signed up",
+          description: "This email is already on the waitlist.",
+          variant: "destructive",
+        });
+      } else {
+        throw new Error("Unexpected error");
+      }
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -41,7 +68,7 @@ export default function WaitlistModal({ open, onOpenChange }: WaitlistModalProps
             Be the first to experience STRYKER — your cricket command center.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="mt-4">
           <div className="flex gap-2">
             <div className="relative flex-1">

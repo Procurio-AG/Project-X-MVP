@@ -1,17 +1,16 @@
 import os
 import sys
 from logging.config import fileConfig
-
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
 from alembic import context
 
 sys.path.append(os.getcwd())
 
 from app.core.config import settings
 from app.infrastructure.db import Base
-from app.models.sql_match import Match  
+from app.models.sql_match import Match 
+from app.models.sql_signup import EmailSignup 
 
 config = context.config
 
