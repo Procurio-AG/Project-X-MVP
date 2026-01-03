@@ -36,7 +36,6 @@ export function useSchedules() {
     queryKey: ["schedules"],
     queryFn: async () => {
       const res = await api.get("/api/v1/schedules");
-      console.log("SCHEDULE API RESPONSE:", res.data);
       return res.data.data; // backend returns { data: ScheduleMatch[] }
     },
   });
@@ -50,27 +49,22 @@ export function useLiveMatch(matchId: number | undefined) {
     queryKey: ["live-match", matchId],
     queryFn: async () => {
       const res = await api.get(`/api/v1/matches/${matchId}/live`);
-      return res.data; // single match endpoint returns LiveMatch directly
+      return res.data; 
     },
     enabled: typeof matchId === "number",
     refetchInterval: 10_000,
   });
 }
 
-// Combined match hook (for detail pages) - merges schedule + live data
 export function useMatch(matchId: number | undefined, options?: { refetchInterval?: number }) {
   const { data: schedules } = useSchedules();
-  const { data: liveMatch, isLoading: liveLoading } = useLiveMatch(matchId);
+  const { data: liveMatch } = useLiveMatch(matchId);
 
   return useQuery<ScheduleMatch | LiveMatch | undefined>({
     queryKey: ["match", matchId],
     queryFn: async () => {
       if (!matchId) return undefined;
-
-      // Try live match first
       if (liveMatch) return liveMatch;
-
-      // Fallback to schedule
       const scheduleMatch = schedules?.find(m => m.match_id === matchId);
       return scheduleMatch;
     },
@@ -116,11 +110,8 @@ export function useMatchDetail(matchId?: number) {
     queryKey: ["match-detail", matchId],
     enabled: typeof matchId === "number",
     queryFn: async () => {
-      const res = await api.get(
-        `/api/v1/matches/${matchId}`
-      );
-
-      return res.data; // full finished match object
+      const res = await api.get(`/api/v1/matches/${matchId}`);
+      return res.data; 
     },
   });
 }
