@@ -106,7 +106,6 @@ export function useMatchDetail(matchId?: number) {
     enabled: typeof matchId === "number",
     queryFn: async () => {
       const res = await api.get(`/api/v1/matches/${matchId}`);
-      console.log('FINISHED MATCH DETAIL: ', res.data);
       return res.data; 
     },
   });

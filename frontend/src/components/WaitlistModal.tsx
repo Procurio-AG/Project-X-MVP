@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Mail } from "lucide-react";
+import { Mail, User } from "lucide-react";
 
 interface WaitlistModalProps {
   open: boolean;
@@ -11,11 +11,12 @@ interface WaitlistModalProps {
 
 export default function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState(""); // State for the new name field
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !name) return;
 
     setIsSubmitting(true);
 
@@ -27,7 +28,8 @@ export default function WaitlistModal({ open, onOpenChange }: WaitlistModalProps
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email }),
+          // Payload now matches WaitlistRequest { name, email }
+          body: JSON.stringify({ name, email }),
         }
       );
 
@@ -37,6 +39,7 @@ export default function WaitlistModal({ open, onOpenChange }: WaitlistModalProps
           description: "We'll notify you when STRYKER launches.",
         });
 
+        setName("");
         setEmail("");
         onOpenChange(false);
       } else if (res.status === 409) {
@@ -69,9 +72,23 @@ export default function WaitlistModal({ open, onOpenChange }: WaitlistModalProps
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="mt-4">
-          <div className="flex gap-2">
-            <div className="relative flex-1">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+          <div className="space-y-3">
+            {/* Name Field Added */}
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="pl-10"
+                required
+              />
+            </div>
+
+            {/* Email Field */}
+            <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="email"
@@ -82,15 +99,18 @@ export default function WaitlistModal({ open, onOpenChange }: WaitlistModalProps
                 required
               />
             </div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
-            >
-              {isSubmitting ? "..." : "Join"}
-            </button>
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">
+
+          {/* Join Button moved below email field */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+          >
+            {isSubmitting ? "..." : "Join"}
+          </button>
+
+          <p className="mt-3 text-xs text-muted-foreground text-center">
             We respect your privacy. No spam, ever.
           </p>
         </form>
