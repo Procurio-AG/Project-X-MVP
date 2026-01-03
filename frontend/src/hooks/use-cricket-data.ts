@@ -12,7 +12,6 @@ import {
 
 /* ---------------- LIVE MATCHES ---------------- */
 
-// Fetch all live matches (Redis-backed)
 export function useLiveMatches(options?: { refetchInterval?: number }) {
   return useQuery<LiveMatch[]>({
     queryKey: ["live-matches"],
@@ -30,20 +29,18 @@ export function useLiveMatches(options?: { refetchInterval?: number }) {
 
 /* ---------------- SCHEDULES ---------------- */
 
-// Fetch schedules (Postgres-backed)
 export function useSchedules() {
   return useQuery<ScheduleMatch[]>({
     queryKey: ["schedules"],
     queryFn: async () => {
       const res = await api.get("/api/v1/schedules");
-      return res.data.data; // backend returns { data: ScheduleMatch[] }
+      return res.data.data; 
     },
   });
 }
 
 /* ---------------- SINGLE MATCH ---------------- */
 
-// Fetch a single live match by ID
 export function useLiveMatch(matchId: number | undefined) {
   return useQuery<LiveMatch>({
     queryKey: ["live-match", matchId],
@@ -72,8 +69,6 @@ export function useMatch(matchId: number | undefined, options?: { refetchInterva
     refetchInterval: options?.refetchInterval ?? 30_000,
   });
 }
-
-/* ---------------- MOCK-ONLY HOOKS (PHASE 1 CONTENT) ---------------- */
 
 export function useNews() {
   return useQuery({
@@ -111,6 +106,7 @@ export function useMatchDetail(matchId?: number) {
     enabled: typeof matchId === "number",
     queryFn: async () => {
       const res = await api.get(`/api/v1/matches/${matchId}`);
+      console.log('FINISHED MATCH DETAIL: ', res.data);
       return res.data; 
     },
   });
