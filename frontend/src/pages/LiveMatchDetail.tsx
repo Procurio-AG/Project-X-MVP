@@ -4,6 +4,7 @@ import {
   useMatchDetail,
   useCommentary,
   useDiscussions,
+  useLiveMatches
 } from "@/hooks/use-cricket-data";
 import LoadingState from "@/components/LoadingState";
 import ErrorState from "@/components/ErrorState";
@@ -14,14 +15,10 @@ import {
   ArrowLeft,
   MapPin,
   Clock,
-  MessageCircle,
   Share2,
   Bookmark,
 } from "lucide-react";
-import type {
-  CommentaryBall,
-  DiscussionPost,
-} from "@/lib/types";
+import type { CommentaryBall, DiscussionPost } from "@/lib/types";
 
 type TabType = "commentary" | "scorecard" | "discussion";
 
@@ -31,16 +28,16 @@ export default function LiveMatchDetail() {
 
   const matchIdNum = matchId ? parseInt(matchId, 10) : undefined;
 
-  const {
-    data: match,
-    isLoading,
-    error,
-    refetch,
-  } = useMatchDetail(matchIdNum);
+  const { data: match, isLoading, error, refetch } =
+    useMatchDetail(matchIdNum);
+
+  const { data: liveMatches } = useLiveMatches();
+
 
   const { data: commentary } = useCommentary(
     activeTab === "commentary" ? matchIdNum : undefined
   );
+
   const { data: discussions } = useDiscussions(
     activeTab === "discussion" ? matchIdNum : undefined
   );
@@ -57,97 +54,151 @@ export default function LiveMatchDetail() {
     );
   }
 
-  // Data Extraction
-  const richInning = match.scorecard?.[0]; 
+  /* ---------------- DATA DERIVATION ---------------- */
+
+  const scorecard = match.scorecard ?? [];
+  const richInning = scorecard[scorecard.length - 1];
+
+  let battingTeamName = richInning?.team_name;
+  let opponentTeamName = "Opponent";
+
+  const battingTeamId = richInning?.team_id;
+
+  // 🔑 Pull matching live match (from /live endpoint)
+  const liveMatch = liveMatches?.find(
+    (m: any) => (m.match_id ?? m.id) === matchIdNum
+  );
+
+  /**
+   * CASE 1: Both teams have batted
+   * → scorecard is source of truth
+   */
+  if (scorecard.length > 1 && battingTeamId) {
+    const opponentInning = scorecard.find(
+      inning => inning.team_id !== battingTeamId
+    );
+
+    if (opponentInning?.team_name) {
+      opponentTeamName = opponentInning.team_name;
+    }
+  }
+
+  /**
+   * CASE 2: Only one innings (live / innings break)
+   * → use /live batting_team & bowling_team (same as LiveMatchCard)
+   */
+  else if (
+    liveMatch?.batting_team &&
+    liveMatch?.bowling_team &&
+    battingTeamId
+  ) {
+    const battingTeam =
+      battingTeamId === liveMatch.batting_team.id
+        ? liveMatch.batting_team
+        : liveMatch.bowling_team;
+
+    const bowlingTeam =
+      battingTeam.id === liveMatch.batting_team.id
+        ? liveMatch.bowling_team
+        : liveMatch.batting_team;
+
+    battingTeamName = battingTeam?.name ?? battingTeamName;
+    opponentTeamName = bowlingTeam?.name ?? opponentTeamName;
+  }
+
+  const opponentInning = scorecard.find(
+    inning => inning.team_id !== battingTeamId
+  );
+
   const venue = match.venue;
   const toss = match.toss;
 
-  /**
-   * Determine Opponent Name
-   * We compare the batting team ID with the teams in the lineups.
-   * Based on your JSON: Team 51 is Stars.
-   */
-  const battingTeamId = richInning?.team_id;
-  // If Team 51 is batting (Stars), the opponent is the 'away' team (Renegades/Scorchers etc.)
-  // If Team 50 is batting, the opponent is the 'home' team.
-  const opponentName = battingTeamId === 51 ? "Melbourne Renegades" : "Melbourne Stars"; 
+  const pageTitle = `${battingTeamName ?? "Match"} | STRYKER`;
 
   return (
     <>
       <Helmet>
-        <title>{`${richInning?.team_name || 'Match'} | STRYKER`}</title>
+        <title>{pageTitle}</title>
       </Helmet>
 
-      {/* Header - Layout as requested */}
+      {/* Header */}
       <section className="bg-primary text-primary-foreground py-8">
         <div className="container-content">
           <Link
             to="/live"
-            className="inline-flex items-center gap-2 text-sm text-primary-foreground/70 hover:text-primary-foreground mb-6"
+            className="inline-flex items-center gap-2 text-sm opacity-70 hover:opacity-100 mb-6"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Live Scores
           </Link>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            {/* Left Column: Batting Team Score */}
-            <div className="text-left">
-              <h1 className="text-3xl font-bold mb-1">
-                {richInning?.team_name || "Melbourne Stars"}
-              </h1>
+            {/* Batting Team */}
+            <div>
+              <h1 className="text-3xl font-bold">{battingTeamName}</h1>
               <p className="text-4xl font-bold">
-                {richInning?.score || "0/0"} 
+                {richInning?.score}
                 <span className="text-xl font-normal ml-2 opacity-80">
-                  ({richInning?.overs || "0.0"} ov)
+                  ({richInning?.overs} ov)
                 </span>
               </p>
             </div>
 
-            {/* Middle Column: Status & Venue */}
-            <div className="flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-full bg-live text-live-foreground flex items-center justify-center font-bold animate-pulse mb-2">
+            {/* Center */}
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-live flex items-center justify-center font-bold animate-pulse mb-2">
                 LIVE
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest mb-2">
-                {match.status || "1ST INNINGS"}
+              <span className="text-xs font-bold uppercase mb-2">
+                {match.status}
               </span>
-              <div className="mt-1">
-                <p className="text-sm font-semibold flex items-center justify-center gap-1">
-                  <MapPin className="h-3 w-3" /> {venue?.name || "Venue TBC"}
-                </p>
-                <p className="text-[10px] opacity-70 uppercase tracking-tighter">{venue?.city || ""}</p>
-              </div>
+              <p className="text-sm font-semibold flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {venue?.name}
+              </p>
+              <p className="text-[10px] opacity-70 uppercase">
+                {venue?.city}
+              </p>
             </div>
 
-            {/* Right Column: Opponent Information */}
+            {/* Opponent */}
             <div className="text-right">
-              <h2 className="text-3xl font-bold mb-1 opacity-60">
-                {opponentName}
-              </h2>
-              <p className="text-lg font-medium opacity-50">Yet to Bat</p>
+              <h2 className="text-3xl font-bold">{opponentTeamName}</h2>
+              {opponentInning ? (
+                <p className="text-4xl font-bold">
+                  {opponentInning.score}
+                  <span className="text-xl font-normal ml-2 opacity-80">
+                    ({opponentInning.overs} ov)
+                  </span>
+                </p>
+              ) : (
+                <p className="text-lg opacity-50">Yet to Bat</p>
+              )}
             </div>
           </div>
 
-          {/* Metadata & Secondary Actions */}
-          <div className="mt-8 flex flex-col items-center gap-4 border-t border-primary-foreground/10 pt-6">
-            <div className="flex flex-wrap justify-center gap-6 text-sm opacity-80">
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4" />
-                Updated: {formatMatchTime(match.updated_at || new Date())}
-              </span>
-            </div>
-            
+          {/* Meta */}
+          <div className="mt-8 flex flex-col items-center gap-4 border-t pt-6">
+            <span className="flex items-center gap-2 text-sm opacity-80">
+              <Clock className="h-4 w-4" />
+              Updated: {formatMatchTime(match.updated_at)}
+            </span>
+
             {toss && (
               <p className="text-sm italic opacity-90">
-                Toss: {toss.won_by_team_id === richInning?.team_id ? richInning.team_name : opponentName} won and elected to {toss.elected}
+                Toss:{" "}
+                {toss.won_by_team_id === battingTeamId
+                  ? battingTeamName
+                  : opponentTeamName}{" "}
+                won and elected to {toss.elected}
               </p>
             )}
 
-            <div className="flex gap-4 mt-2">
-              <button className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors text-sm font-medium">
+            <div className="flex gap-4">
+              <button className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 rounded-md">
                 <Bookmark className="h-4 w-4" /> Follow
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors text-sm font-medium">
+              <button className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 rounded-md">
                 <Share2 className="h-4 w-4" /> Share
               </button>
             </div>
@@ -155,27 +206,21 @@ export default function LiveMatchDetail() {
         </div>
       </section>
 
-      {/* Tabs Section */}
+      {/* Tabs */}
       <div className="container-content py-8">
-        <div className="flex gap-8 mb-8 border-b border-border">
-          {(["commentary", "scorecard", "discussion"] as TabType[]).map((tab) => (
+        <div className="flex gap-8 mb-8 border-b">
+          {(["commentary", "scorecard", "discussion"] as TabType[]).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                "pb-3 text-sm font-semibold transition-all relative",
+                "pb-3 text-sm font-semibold",
                 activeTab === tab
                   ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground"
               )}
             >
-              <span className="flex items-center gap-2">
-                {tab === "discussion" && <MessageCircle className="h-4 w-4" />}
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </span>
-              {activeTab === tab && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent" />
-              )}
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
         </div>
@@ -183,11 +228,9 @@ export default function LiveMatchDetail() {
         {activeTab === "commentary" && (
           <CommentaryTab commentary={commentary || []} />
         )}
-
         {activeTab === "scorecard" && (
           <ScorecardTab scorecard={richInning} />
         )}
-
         {activeTab === "discussion" && (
           <DiscussionTab discussions={discussions || []} />
         )}
@@ -196,18 +239,18 @@ export default function LiveMatchDetail() {
   );
 }
 
-/* ---------------- Sub-Components ---------------- */
+/* ---------------- Sub Components ---------------- */
 
 function CommentaryTab({ commentary }: { commentary: CommentaryBall[] }) {
-  if (commentary.length === 0) {
-    return <p className="text-center py-12 text-muted-foreground">Commentary will appear here shortly.</p>;
-  }
+  if (!commentary.length)
+    return <p className="text-center py-12 opacity-60">Commentary coming soon.</p>;
+
   return (
     <div className="space-y-4">
-      {commentary.map((ball) => (
+      {commentary.map(ball => (
         <div key={ball.id} className="p-4 bg-card border rounded-lg">
-          <span className="text-sm font-bold text-accent">{ball.over}</span>
-          <p className="text-foreground mt-1">{ball.description}</p>
+          <span className="font-bold">{ball.over}</span>
+          <p>{ball.description}</p>
         </div>
       ))}
     </div>
@@ -290,12 +333,12 @@ function ScorecardTab({ scorecard }: { scorecard: any }) {
 }
 
 function DiscussionTab({ discussions }: { discussions: DiscussionPost[] }) {
-  if (discussions.length === 0) {
-    return <p className="text-center py-12 text-muted-foreground">Join the conversation. No posts yet.</p>;
-  }
+  if (!discussions.length)
+    return <p className="text-center py-12 opacity-60">No discussions yet.</p>;
+
   return (
     <div className="space-y-4">
-      {discussions.map((post) => (
+      {discussions.map(post => (
         <DiscussionCard key={post.id} post={post} />
       ))}
     </div>

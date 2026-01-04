@@ -10,7 +10,7 @@ import ErrorState from "@/components/ErrorState";
 import EmptyState from "@/components/EmptyState";
 import { Radio, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 type FilterStatus = "ALL" | "LIVE" | "UPCOMING" | "FINISHED";
 
@@ -33,29 +33,36 @@ export default function LiveScores() {
 
   const { data: liveMatches } = useLiveMatches();
 
-  // ✅ REMOVE overlap: drop live matches from schedules
-  const liveIds = new Set(
-    (liveMatches || []).map((m) => m.match_id)
-  );
+  /* ---------------- FIX: DEDUPLICATION USING MAP ---------------- */
+  const filteredMatches = useMemo(() => {
+    // We use a Map to ensure match_id is unique. 
+    // If a match is in both Live and Schedule, the Live version will be stored.
+    const matchMap = new Map<number | string, any>();
 
-  const scheduleOnlyMatches =
-    scheduleMatches?.filter(
-      (m) => !liveIds.has(m.match_id)
-    ) || [];
+    // 1. Process Live matches first (higher priority data)
+    if (filter === "ALL" || filter === "LIVE") {
+      (liveMatches || []).forEach((match) => {
+        matchMap.set(match.match_id, { ...match, _isLive: true });
+      });
+    }
 
-  const filteredMatches = (() => {
-    if (filter === "LIVE") return liveMatches || [];
+    // 2. Process Schedule matches
+    if (filter !== "LIVE") {
+      (scheduleMatches || []).forEach((match) => {
+        const status = mapStatus(match.status);
+        
+        // Only add if it matches the current filter
+        if (filter === "ALL" || status === filter) {
+          // If filtering "ALL", don't overwrite if we already have a Live version
+          if (!matchMap.has(match.match_id)) {
+            matchMap.set(match.match_id, { ...match, _isLive: false });
+          }
+        }
+      });
+    }
 
-    if (filter === "ALL")
-      return [
-        ...(liveMatches || []),
-        ...scheduleOnlyMatches,
-      ];
-
-    return scheduleOnlyMatches.filter(
-      (m) => mapStatus(m.status) === filter
-    );
-  })();
+    return Array.from(matchMap.values());
+  }, [liveMatches, scheduleMatches, filter]);
 
   const liveCount = liveMatches?.length || 0;
 
@@ -148,14 +155,15 @@ export default function LiveScores() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredMatches.map((match) =>
-              "batting_team" in match ? (
+              // Use the internal _isLive flag or duck-typing to choose the component
+              match._isLive || "batting_team" in match ? (
                 <LiveMatchCard
-                  key={match.match_id}
+                  key={`live-${match.match_id}`}
                   match={match}
                 />
               ) : (
                 <MatchCard
-                  key={match.match_id}
+                  key={`sched-${match.match_id}`}
                   match={match}
                 />
               )
