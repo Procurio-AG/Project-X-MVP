@@ -19,4 +19,10 @@ class Match(Base):
     home_team = Column(JSON, nullable=True)
     away_team = Column(JSON, nullable=True)
 
+    # Stores formatted score like "145/3 (20.0)"
+    home_score = Column(String, nullable=True) 
+    away_score = Column(String, nullable=True)
+    # Stores "India won by 7 runs"
+    result_note = Column(String, nullable=True)
+
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())

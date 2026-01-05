@@ -47,7 +47,7 @@ class SportMonksAPI:
 
     async def fetch_fixtures_raw(self) -> dict:
             today = datetime.now().date()
-            start_date = today - timedelta(days=7)
+            start_date = today - timedelta(days=30)
             end_date = today + timedelta(days=30)
             
             date_range = f"{start_date},{end_date}"
@@ -55,7 +55,7 @@ class SportMonksAPI:
             url = f"{self.base_url}/fixtures"
             params = {
                 "api_token": self.api_token,
-                "include": "localteam,visitorteam,venue,league",
+                "include": "localteam,visitorteam,venue,league,runs",
                 "sort": "starting_at",
                 "filter[starts_between]": date_range,
             }
