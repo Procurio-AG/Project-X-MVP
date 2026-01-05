@@ -1,70 +1,109 @@
+// frontend/src/pages/LiveScores.tsx
+
 import { Helmet } from "react-helmet-async";
-import {
-  useSchedules,
-  useLiveMatches,
-} from "@/hooks/use-cricket-data";
-import MatchCard from "@/components/MatchCard";
+import { useState, useMemo } from "react";
+import { Radio, Search, Clock, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useLiveScores, useSchedules } from "@/hooks/use-cricket-data";
 import LiveMatchCard from "@/components/LiveMatchCard";
+import MatchCard from "@/components/MatchCard";
 import LoadingState from "@/components/LoadingState";
 import ErrorState from "@/components/ErrorState";
-import EmptyState from "@/components/EmptyState";
-import { Radio, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useState, useMemo } from "react";
-
-type FilterStatus = "ALL" | "LIVE" | "UPCOMING" | "FINISHED";
-
-function mapStatus(status: string): FilterStatus {
-  const s = status.toLowerCase();
-  if (s === "ns") return "UPCOMING";
-  if (s === "finished") return "FINISHED";
-  return "LIVE";
-}
+import type { LiveScoreMatch, ScheduleMatch, CombinedMatch, FilterStatus } from "@/lib/types";
 
 export default function LiveScores() {
-  const [filter, setFilter] = useState<FilterStatus>("ALL");
+  const [filter, setFilter] = useState<FilterStatus>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const {
-    data: scheduleMatches,
-    isLoading,
-    error,
-    refetch,
+  // Fetch data from both endpoints
+  const { 
+    data: liveScoresData = [], 
+    isLoading: liveLoading,
+    error: liveError,
+    refetch: refetchLive
+  } = useLiveScores({ refetchInterval: 30000 });
+  
+  const { 
+    data: schedulesData = [], 
+    isLoading: scheduleLoading,
+    error: scheduleError,
+    refetch: refetchSchedules
   } = useSchedules();
 
-  const { data: liveMatches } = useLiveMatches();
+  const isLoading = liveLoading || scheduleLoading;
+  const error = liveError || scheduleError;
 
-  /* ---------------- FIX: DEDUPLICATION USING MAP ---------------- */
-  const filteredMatches = useMemo(() => {
-    // We use a Map to ensure match_id is unique. 
-    // If a match is in both Live and Schedule, the Live version will be stored.
-    const matchMap = new Map<number | string, any>();
+  // Combine and filter matches
+  const combinedMatches = useMemo<CombinedMatch[]>(() => {
+    const matches: CombinedMatch[] = [];
 
-    // 1. Process Live matches first (higher priority data)
-    if (filter === "ALL" || filter === "LIVE") {
-      (liveMatches || []).forEach((match) => {
-        matchMap.set(match.match_id, { ...match, _isLive: true });
-      });
+    // Add LIVE matches only (filter out NS and FINISHED from livescore endpoint)
+    if (Array.isArray(liveScoresData)) {
+      liveScoresData
+        .filter((m: LiveScoreMatch) => m.match_status === 'LIVE')
+        .forEach((m: LiveScoreMatch) => {
+          matches.push({ ...m, _type: 'live' });
+        });
     }
 
-    // 2. Process Schedule matches
-    if (filter !== "LIVE") {
-      (scheduleMatches || []).forEach((match) => {
-        const status = mapStatus(match.status);
-        
-        // Only add if it matches the current filter
-        if (filter === "ALL" || status === filter) {
-          // If filtering "ALL", don't overwrite if we already have a Live version
-          if (!matchMap.has(match.match_id)) {
-            matchMap.set(match.match_id, { ...match, _isLive: false });
-          }
+    // Add FINISHED matches only from schedules endpoint
+    if (Array.isArray(schedulesData)) {
+      schedulesData
+        .filter((m: ScheduleMatch) => m.status === 'Finished')
+        .forEach((m: ScheduleMatch) => {
+          matches.push({ ...m, _type: 'finished' });
+        });
+    }
+
+    // Sort: LIVE first, then FINISHED by start_time (most recent first)
+    return matches.sort((a, b) => {
+      if (a._type === 'live' && b._type === 'finished') return -1;
+      if (a._type === 'finished' && b._type === 'live') return 1;
+      
+      if (a._type === 'finished' && b._type === 'finished') {
+        return new Date(b.start_time).getTime() - new Date(a.start_time).getTime();
+      }
+      
+      return 0;
+    });
+  }, [liveScoresData, schedulesData]);
+
+  // Apply filters
+  const filteredMatches = useMemo(() => {
+    let result = combinedMatches;
+
+    // Status filter
+    if (filter === 'LIVE') {
+      result = result.filter(m => m._type === 'live');
+    } else if (filter === 'COMPLETED') {
+      result = result.filter(m => m._type === 'finished');
+    }
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(m => {
+        if (m._type === 'live') {
+          return (
+            m.teams.batting_first.name.toLowerCase().includes(query) ||
+            m.teams.batting_second.name.toLowerCase().includes(query) ||
+            m.venue.city.toLowerCase().includes(query)
+          );
+        } else {
+          return (
+            m.home_team.name.toLowerCase().includes(query) ||
+            m.away_team.name.toLowerCase().includes(query) ||
+            m.league.name.toLowerCase().includes(query) ||
+            m.venue.city.toLowerCase().includes(query)
+          );
         }
       });
     }
 
-    return Array.from(matchMap.values());
-  }, [liveMatches, scheduleMatches, filter]);
+    return result;
+  }, [combinedMatches, filter, searchQuery]);
 
-  const liveCount = liveMatches?.length || 0;
+  const liveCount = combinedMatches.filter(m => m._type === 'live').length;
 
   return (
     <>
@@ -77,94 +116,107 @@ export default function LiveScores() {
       </Helmet>
 
       {/* Header */}
-      <section className="bg-primary text-primary-foreground py-10">
-        <div className="container-content">
+      <section className="relative bg-primary text-primary-foreground py-24 md:py-12 overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="flex items-center gap-3 mb-2">
-            <Radio className="h-6 w-6" />
-            <h1 className="font-display text-3xl font-bold">
-              Live Scores
-            </h1>
+            <Radio className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Live Scores</h1>
             {liveCount > 0 && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-live text-live-foreground text-sm font-medium animate-pulse-subtle">
+              <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-red-500 text-white text-sm font-medium animate-pulse">
                 {liveCount} LIVE
               </span>
             )}
           </div>
-          <p className="text-primary-foreground/80">
-            Real-time updates from matches around the world.
+          <p className="text-blue-100">
+            Real-time updates from matches around the world
           </p>
         </div>
       </section>
 
-      <div className="container-content py-8">
-        {/* Filter Tabs */}
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-          {(["ALL", "LIVE", "UPCOMING", "FINISHED"] as FilterStatus[]).map(
-            (status) => (
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        {/* Filters and Search */}
+        <div className="mb-6 space-y-4">
+          {/* Status Filter */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            {(['ALL', 'LIVE', 'COMPLETED'] as FilterStatus[]).map(status => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
+                  'px-5 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap',
                   filter === status
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    ? 'bg-slate-900 text-white shadow-md'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+
                 )}
               >
-                {status === "LIVE" && (
-                  <span className="inline-flex items-center gap-1.5">
+                {status === 'ALL' && 'All Matches'}
+                {status === 'LIVE' && (
+                  <span className="flex items-center gap-2">
                     <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full rounded-full bg-live opacity-75 animate-ping" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-live" />
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-white opacity-75 animate-ping" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
                     </span>
                     Live
                   </span>
                 )}
-                {status === "ALL" && "All Matches"}
-                {status === "UPCOMING" && (
-                  <span className="inline-flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5" />
-                    Upcoming
-                  </span>
-                )}
-                {status === "FINISHED" && "Completed"}
+                {status === 'COMPLETED' && 'Completed'}
               </button>
-            )
-          )}
+            ))}
+          </div>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by team, league, or city..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
 
         {/* Auto-refresh indicator */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
-          <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+        <div className="flex items-center gap-2 text-xs text-gray-500 mb-6">
+          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
           Auto-refreshing every 30 seconds
         </div>
 
-        {/* Matches Grid */}
+        {/* Matches List */}
         {isLoading ? (
           <LoadingState message="Fetching latest scores..." />
         ) : error ? (
           <ErrorState
             message="Unable to fetch match data. Please try again."
-            onRetry={() => refetch()}
+            onRetry={() => {
+              refetchLive();
+              refetchSchedules();
+            }}
           />
         ) : filteredMatches.length === 0 ? (
-          <EmptyState
-            title={`No ${filter.toLowerCase()} matches`}
-            message="Check back later or adjust your filters."
-          />
+          <div className="text-center py-12">
+            <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              No matches found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              {searchQuery ? 'Try adjusting your search' : 'Check back later for updates'}
+            </p>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredMatches.map((match) =>
-              // Use the internal _isLive flag or duck-typing to choose the component
-              match._isLive || "batting_team" in match ? (
-                <LiveMatchCard
-                  key={`live-${match.match_id}`}
-                  match={match}
+          <div className="space-y-4">
+            {filteredMatches.map(match => 
+              match._type === 'live' ? (
+                <LiveMatchCard 
+                  key={`live-${match.match_id}`} 
+                  match={match} 
                 />
               ) : (
-                <MatchCard
-                  key={`sched-${match.match_id}`}
-                  match={match}
+                <MatchCard 
+                  key={`finished-${match.match_id}`} 
+                  match={match} 
                 />
               )
             )}

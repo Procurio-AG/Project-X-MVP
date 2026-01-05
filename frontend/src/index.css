@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,102 +8,81 @@
     /* STRYKER Design System - Premium Cricket Platform */
     
     /* Core Background Colors */
-    --background: 40 33% 98%;
-    --foreground: 220 25% 14%;
+    --background: 0 0% 99%;
+    --foreground: 220 25% 12%;
     
     /* Card & Surface */
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 14%;
+    --card-foreground: 220 25% 12%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 14%;
+    --popover-foreground: 220 25% 12%;
     
-    /* Primary - Deep Slate Navy (Trust & Premium) */
-    --primary: 220 30% 18%;
-    --primary-foreground: 40 33% 98%;
+    /* Primary - Deep Slate Navy (Authority & Trust) */
+    --primary: 220 30% 16%;
+    --primary-foreground: 0 0% 99%;
     
     /* Secondary - Warm Gray */
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 220 25% 14%;
+    --secondary: 220 10% 94%;
+    --secondary-foreground: 220 25% 12%;
     
     /* Muted - Subtle backgrounds */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 220 10% 96%;
+    --muted-foreground: 220 8% 46%;
     
-    /* Accent - Cricket Field Green */
-    --accent: 145 45% 32%;
+    /* Accent - Cricket Field Green (ONLY for intentional moments) */
+    --accent: 145 50% 35%;
     --accent-foreground: 0 0% 100%;
     
-    /* Highlight - Premium Gold */
-    --highlight: 42 87% 55%;
-    --highlight-foreground: 220 25% 14%;
-    
-    /* Status Colors */
-    --live: 0 72% 51%;
+    /* Status - LIVE indicator */
+    --live: 0 75% 52%;
     --live-foreground: 0 0% 100%;
     
-    --upcoming: 220 14% 46%;
-    --finished: 145 45% 32%;
-    
-    /* Destructive */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    
     /* Border & Input */
-    --border: 220 14% 90%;
-    --input: 220 14% 90%;
-    --ring: 220 30% 18%;
+    --border: 220 10% 88%;
+    --input: 220 10% 88%;
+    --ring: 220 30% 16%;
     
-    --radius: 0.5rem;
+    /* Navbar States */
+    --nav-bg-transparent: 0 0% 100% / 0%;
+    --nav-bg-scrolled: 0 0% 100% / 95%;
+    --nav-border-scrolled: 220 10% 88%;
     
-    /* Sidebar (if needed) */
-    --sidebar-background: 220 25% 14%;
-    --sidebar-foreground: 40 33% 98%;
-    --sidebar-primary: 145 45% 32%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 25% 20%;
-    --sidebar-accent-foreground: 40 33% 98%;
-    --sidebar-border: 220 25% 22%;
-    --sidebar-ring: 145 45% 32%;
-    
-    /* Typography */
-    --font-display: 'Libre Baskerville', Georgia, serif;
-    --font-body: 'Inter', system-ui, sans-serif;
-    
-    /* Shadows */
-    --shadow-card: 0 1px 3px 0 hsl(220 25% 14% / 0.04), 0 1px 2px -1px hsl(220 25% 14% / 0.04);
-    --shadow-elevated: 0 4px 6px -1px hsl(220 25% 14% / 0.05), 0 2px 4px -2px hsl(220 25% 14% / 0.05);
-    --shadow-overlay: 0 10px 15px -3px hsl(220 25% 14% / 0.08), 0 4px 6px -4px hsl(220 25% 14% / 0.08);
+    /* Shadows - Subtle & Refined */
+    --shadow-card: 0 1px 2px 0 hsl(220 25% 12% / 0.03), 0 1px 2px -1px hsl(220 25% 12% / 0.03);
+    --shadow-elevated: 0 4px 6px -1px hsl(220 25% 12% / 0.04), 0 2px 4px -2px hsl(220 25% 12% / 0.04);
+    --shadow-overlay: 0 10px 15px -3px hsl(220 25% 12% / 0.06), 0 4px 6px -4px hsl(220 25% 12% / 0.06);
   }
 
   .dark {
-    --background: 220 25% 10%;
-    --foreground: 40 33% 98%;
+    --background: 220 28% 9%;
+    --foreground: 0 0% 98%;
     
-    --card: 220 25% 14%;
-    --card-foreground: 40 33% 98%;
+    --card: 220 25% 12%;
+    --card-foreground: 0 0% 98%;
     
-    --popover: 220 25% 14%;
-    --popover-foreground: 40 33% 98%;
+    --popover: 220 25% 12%;
+    --popover-foreground: 0 0% 98%;
     
-    --primary: 40 33% 98%;
-    --primary-foreground: 220 25% 14%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 220 28% 9%;
     
-    --secondary: 220 25% 18%;
-    --secondary-foreground: 40 33% 98%;
+    --secondary: 220 25% 16%;
+    --secondary-foreground: 0 0% 98%;
     
-    --muted: 220 25% 16%;
-    --muted-foreground: 220 14% 60%;
+    --muted: 220 25% 14%;
+    --muted-foreground: 220 12% 60%;
     
-    --accent: 145 45% 40%;
+    --accent: 145 50% 40%;
     --accent-foreground: 0 0% 100%;
     
-    --highlight: 42 87% 55%;
-    --highlight-foreground: 220 25% 14%;
+    --border: 220 25% 18%;
+    --input: 220 25% 18%;
+    --ring: 0 0% 98%;
     
-    --border: 220 25% 20%;
-    --input: 220 25% 20%;
-    --ring: 40 33% 98%;
+    --nav-bg-transparent: 220 28% 9% / 0%;
+    --nav-bg-scrolled: 220 28% 9% / 95%;
+    --nav-border-scrolled: 220 25% 18%;
   }
 }
 
@@ -114,58 +93,95 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-body);
+    font-family: 'Neue Haas Grotesk Display Pro', 'Inter', system-ui, sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    @apply font-bold tracking-tight;
+  /* Editorial Typography Hierarchy */
+  h1 {
+    @apply text-display-lg font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-display-md font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply text-display-sm font-semibold tracking-tight;
+  }
+
+  h4 {
+    @apply text-heading-lg font-semibold;
+  }
+
+  h5 {
+    @apply text-heading font-semibold;
+  }
+
+  h6 {
+    @apply text-heading-sm font-semibold;
+  }
+
+  p {
+    @apply text-body leading-relaxed;
   }
 }
 
 @layer components {
-  .font-display {
-    font-family: var(--font-display);
-  }
-  
-  .font-body {
-    font-family: var(--font-body);
-  }
-  
-  /* Live pulse indicator */
+  /* Live pulse indicator - Intentional use only */
   .live-pulse {
     @apply relative;
   }
   
   .live-pulse::before {
     content: '';
-    @apply absolute inset-0 rounded-full bg-live animate-ping opacity-75;
+    @apply absolute inset-0 rounded-full bg-live animate-pulse-live opacity-75;
   }
   
-  /* Card hover effect - subtle */
+  /* Card hover effect - Subtle elevation */
   .card-hover {
-    @apply transition-shadow duration-200;
+    @apply transition-all duration-base ease-smooth;
   }
   
   .card-hover:hover {
     box-shadow: var(--shadow-elevated);
   }
   
-  /* Status badges */
+  /* Status badges - Minimal & Intentional */
   .status-live {
-    @apply bg-live text-live-foreground;
+    @apply inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-live text-live-foreground text-body-xs font-medium;
   }
   
   .status-upcoming {
-    @apply bg-muted text-muted-foreground;
+    @apply inline-flex items-center px-2 py-1 rounded-sm bg-muted text-muted-foreground text-body-xs font-medium;
   }
   
   .status-finished {
-    @apply bg-accent/10 text-accent;
+    @apply inline-flex items-center px-2 py-1 rounded-sm bg-accent/10 text-accent text-body-xs font-medium;
+  }
+  
+  /* Navbar scroll state */
+  .nav-transparent {
+    background-color: hsl(var(--nav-bg-transparent));
+    border-bottom: 1px solid transparent;
+    backdrop-filter: none;
+  }
+  
+  .nav-scrolled {
+    background-color: hsl(var(--nav-bg-scrolled));
+    border-bottom: 1px solid hsl(var(--nav-border-scrolled));
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-card);
+  }
+  
+  /* Hairline divider */
+  .divider-hairline {
+    @apply border-t border-border/50;
   }
 }
 
@@ -174,7 +190,31 @@
     text-wrap: balance;
   }
   
+  /* Container with editorial spacing */
   .container-content {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-6 lg:px-8;
+  }
+  
+  /* Vertical rhythm utilities */
+  .section-spacing {
+    @apply py-16 lg:py-24;
+  }
+  
+  .content-spacing {
+    @apply space-y-6;
+  }
+  
+  /* Focus states - Subtle & Accessible */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  }
+  
+  /* Smooth fade utilities */
+  .fade-in {
+    @apply animate-fade-in;
+  }
+  
+  .fade-up {
+    @apply animate-fade-up;
   }
 }

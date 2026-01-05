@@ -1,57 +1,118 @@
+// frontend/src/components/LiveMatchCard.tsx
+
 import { Link } from "react-router-dom";
+import { getTeamLogoUrl } from "@/lib/utils";
+import type { LiveScoreMatch } from "@/lib/types";
 
-export default function LiveMatchCard({ match }: { match: any }) {
-  const matchId = match.match_id ?? match.id;
+interface LiveMatchCardProps {
+  match: LiveScoreMatch & { _type: 'live' };
+}
 
-  const score = match.score;
+export default function LiveMatchCard({ match }: LiveMatchCardProps) {
+  const team1 = match.teams.batting_first;
+  const team2 = match.teams.batting_second;
+  
+  // Determine toss winner
+  const tossWinner = match.toss.won_by_team_id === team1.id ? team1 : team2;
+  const tossText = match.toss.won_by_team_id && match.toss.elected
+    ? `${tossWinner.name} won toss and elected to ${match.toss.elected}`
+    : null;
 
-  // 🔑 Determine current batting & bowling teams dynamically
-  const battingTeam =
-    score?.team_id === match.batting_team?.id
-      ? match.batting_team
-      : match.bowling_team;
+  // Determine which team is batting based on current score
+  const currentBattingTeamId = match.scores.current?.team_id;
+  const isBattingFirst = currentBattingTeamId === team1.id;
+  
+  // Score logic
+  const team1Score = isBattingFirst 
+    ? match.scores.current 
+    : (match.innings_phase === 'FIRST_INNINGS' ? null : match.scores.first_innings);
+    
+  const team2Score = !isBattingFirst 
+    ? match.scores.current 
+    : (match.innings_phase === 'FIRST_INNINGS' ? null : match.scores.second_innings);
 
-  const bowlingTeam =
-    battingTeam?.id === match.batting_team?.id
-      ? match.bowling_team
-      : match.batting_team;
+  const team1Logo = getTeamLogoUrl(team1);
+  const team2Logo = getTeamLogoUrl(team2);
 
   return (
-    <Link to={`/match/${matchId}`} className="block group">
-      <div className="border border-live rounded-lg p-5 bg-live/5 group-hover:bg-live/10 transition-all">
-        <div className="flex justify-between mb-3">
-          <span className="text-live text-xs font-bold uppercase tracking-wider animate-pulse">
-            {match.status || "LIVE"}
+    <Link 
+      to={`/match/${match.match_id}`}
+      className="block bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 rounded-xl border-2 border-red-500 hover:border-red-600 transition-all p-6 shadow-lg hover:shadow-xl"
+    >
+      {/* Live Indicator */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-3 w-3">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
           </span>
-          <span className="text-[10px] text-muted-foreground">
-            ID: {matchId}
+          <span className="text-red-600 dark:text-red-500 text-sm font-bold uppercase tracking-wider">
+            LIVE
           </span>
         </div>
+        <span className="text-xs text-gray-500">
+          {match.venue.city}
+        </span>
+      </div>
 
-        <div className="space-y-2 mb-4">
-          {/* Batting team */}
-          <div className="flex justify-between items-center">
-            <span className="font-medium">
-              {battingTeam?.name ?? "Batting"}
-            </span>
-            {score && (
-              <span className="font-bold text-lg">
-                {score.runs}/{score.wickets}
-              </span>
-            )}
+      {/* Teams and Scores */}
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
+        {/* Team 1 */}
+        <div className="flex items-center gap-3">
+          {team1Logo ? (
+            <img 
+              src={team1Logo} 
+              alt={team1.name}
+              className="w-10 h-10 object-contain flex-shrink-0"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold">
+              {team1.short_name || team1.code || '?'}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+              {team1.name}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {team1Score ? `${team1Score.score} (${team1Score.overs})` : 'Yet to bat'}
+            </p>
           </div>
+        </div>
 
-          {/* Bowling team */}
-          <div className="flex justify-between items-center opacity-70">
-            <span>{bowlingTeam?.name ?? "Bowling"}</span>
-            {score && (
-              <span className="text-sm">
-                ({score.overs} ov)
-              </span>
-            )}
+        {/* VS Divider */}
+        <div className="text-gray-400 font-bold text-lg px-2">VS</div>
+
+        {/* Team 2 */}
+        <div className="flex items-center gap-3 flex-row-reverse text-right">
+          {team2Logo ? (
+            <img 
+              src={team2Logo} 
+              alt={team2.name}
+              className="w-10 h-10 object-contain flex-shrink-0"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold">
+              {team2.short_name || team2.code || '?'}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+              {team2.name}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {team2Score ? `${team2Score.score} (${team2Score.overs})` : 'Yet to bat'}
+            </p>
           </div>
         </div>
       </div>
+
+      {/* Toss Info */}
+      {tossText && (
+        <div className="text-center text-sm text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50 rounded-lg py-2 px-3">
+          {tossText}
+        </div>
+      )}
     </Link>
   );
 }
