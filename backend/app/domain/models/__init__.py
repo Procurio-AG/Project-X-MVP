@@ -1,5 +1,6 @@
 from .match import Team, League, Venue, MatchTeams, MatchSchedule, ScheduleResponse
-from .live import LiveScore, LiveMatch
+from .live import InningScore, LiveMatch 
+from .livescore_view import LiveScoreCard
 from .player import BattingStats, BowlingStats, PlayerStats
 from .event import MatchEvent, EventType
 from .match_detail import PlayerInfo, BatsmanStats, BowlerStats, InningScorecard, MatchDetail
@@ -22,5 +23,6 @@ __all__ = [
     "BatsmanStats",
     "BowlerStats",
     "InningScorecard",
-    "MatchDetail"
+    "MatchDetail",
+    "InningScore"
 ]

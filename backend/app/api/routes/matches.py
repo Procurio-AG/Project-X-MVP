@@ -1,10 +1,19 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+
 from app.domain.models import LiveMatch
+from app.domain.models.livescore_view import LiveScoreCard
+
 from app.infrastructure.external_api import sportmonks_api
 from app.infrastructure.redis_client import set_json, get_json, redis_client
+from app.infrastructure.db import get_db
+
+from app.services.score_service import get_live_scores_view
 from app.services.polling_service import get_raw_live_matches, get_raw_live_match
 from app.services.normalizers.match_normalizer import normalize_live_match
 from app.services.normalizers.detail_normalizer import normalize_match_detail
+
 
 
 router = APIRouter(prefix="/api/v1/matches")
@@ -42,6 +51,15 @@ async def get_live_matches():
             result.append(match)
 
     return {"data": result}
+
+@router.get("/livescore", response_model=List[LiveScoreCard])
+def get_unified_livescores(db: Session = Depends(get_db)):
+    """
+    Unified endpoint for Live Cards.
+    Merges SQL (Static) + Redis (Dynamic) data to return a fully resolved view.
+    Used for the vertical match list.
+    """
+    return get_live_scores_view(db)
 
 #Dynamic routes
 @router.get("/{match_id}/live", response_model=LiveMatch)
