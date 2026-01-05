@@ -16,25 +16,25 @@ export default function Schedule() {
     if (!matches) return {};
 
     const now = new Date();
+    const todayStr = now.toDateString();
 
-    // Filter visible matches
     const visibleMatches = matches.filter((match) => {
       const matchDate = new Date(match.start_time);
+      const isToday = matchDate.toDateString() === todayStr;
 
-      // Upcoming
+      // Always allow upcoming
       if (match.status === "NS") return true;
 
-      // Live
-      if (match.status === "LIVE") return true;
-
-      // Finished — allow only if today
+      // Allow LIVE only if today
       if (
-        match.status.toLowerCase() === "finished" &&
-        matchDate.toDateString() === now.toDateString()
+        match.status !== "NS" &&
+        match.status.toLowerCase() !== "finished" &&
+        isToday
       ) {
-        return true;
+        return false;
       }
 
+      // Do NOT show finished matches in schedule
       return false;
     });
 
