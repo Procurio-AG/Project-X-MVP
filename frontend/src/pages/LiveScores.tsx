@@ -1,5 +1,3 @@
-// frontend/src/pages/LiveScores.tsx
-
 import { Helmet } from "react-helmet-async";
 import { useState, useMemo } from "react";
 import { Radio, Search, AlertTriangle } from "lucide-react";
@@ -37,6 +35,8 @@ export default function LiveScores() {
   const isLoading = liveLoading || scheduleLoading;
   const error = liveError || scheduleError;
 
+  /* ---------------- COMBINE MATCHES ---------------- */
+
   const combinedMatches = useMemo<CombinedMatch[]>(() => {
     const matches: CombinedMatch[] = [];
 
@@ -58,6 +58,8 @@ export default function LiveScores() {
       return new Date(b.start_time).getTime() - new Date(a.start_time).getTime();
     });
   }, [liveScoresData, schedulesData]);
+
+  /* ---------------- FILTER ---------------- */
 
   const filteredMatches = useMemo(() => {
     let result = combinedMatches;
@@ -91,134 +93,115 @@ export default function LiveScores() {
         <title>Live Cricket Scores | STRYKER</title>
       </Helmet>
 
-      {/* BACKGROUND LAYER - Using 'fixed' ensures it stays put while content scrolls */}
-      <div className="fixed inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1730739463889-34c7279277a9?q=80&w=1600&auto=format&fit=crop"
-          alt="Live Cricket Background"
-          className="w-full h-full object-cover"
-        />
-        {/* Gradient overlay to ensure text readability and fade to page background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/70 to-background/95" />
-      </div>
+      {/* ---------------- HERO (Schedule-style) ---------------- */}
+      <section className="relative h-[45vh] min-h-[360px] w-full overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1730739463889-34c7279277a9?q=80&w=1600&auto=format&fit=crop"
+            alt="Live cricket"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-      {/* CONTENT LAYER */}
-      <div className="relative z-10">
-        {/* COMPACT HERO */}
-        <section className="h-[40vh] min-h-[300px] flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background/95" />
+
+        <div className="absolute inset-0 flex items-center z-10">
           <div className="container-content">
-            <div className="max-w-4xl">
+            <div className="max-w-3xl">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-black/5 backdrop-blur-md rounded-lg border border-black/5">
-                  <Radio className="h-5 w-5 text-black" />
-                </div>
+                <Radio className="h-6 w-6 text-white" />
                 {liveCount > 0 && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-live text-white text-[10px] font-black tracking-widest animate-pulse">
-                    {liveCount} LIVE NOW
+                  <span className="text-white/80 uppercase tracking-widest text-xs font-bold">
+                    {liveCount} Live Now
                   </span>
                 )}
               </div>
 
-              <h1 className="font-display text-4xl md:text-5xl font-bold text-black mb-4 tracking-tight">
+              <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
                 Live Scores
               </h1>
 
-              <p className="text-black/70 text-lg md:text-xl max-w-2xl font-medium">
-                Real-time updates from professional matches worldwide. Precision
-                data, instantly delivered.
+              <p className="text-white/90 text-lg max-w-2xl">
+                Real-time updates from professional matches worldwide.
               </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* MAIN MATCH LIST SECTION */}
-        <section className="relative pb-24">
-          <div className="container-content">
-            {/* FILTER + SEARCH CARD */}
-            <div className="bg-background/60 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl p-6 mb-10 -mt-8">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                {/* Status Tabs */}
-                <div className="flex items-center gap-1 p-1 bg-black/5 rounded-xl w-fit">
-                  {(["ALL", "LIVE", "COMPLETED"] as FilterStatus[]).map((status) => (
-                    <button
-                      key={status}
-                      onClick={() => setFilter(status)}
-                      className={cn(
-                        "px-6 py-2.5 rounded-lg text-sm font-bold transition-all",
-                        filter === status
-                          ? "bg-white text-black shadow-sm"
-                          : "text-black/50 hover:text-black hover:bg-black/5"
-                      )}
-                    >
-                      {status === "ALL" && "All Matches"}
-                      {status === "LIVE" && "Live"}
-                      {status === "COMPLETED" && "Finished"}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Search Input */}
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/40" />
-                  <input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search teams, series, or city..."
-                    className="w-full pl-12 pr-4 py-3 bg-black/5 border-none rounded-xl text-sm focus:ring-2 focus:ring-black/10 outline-none placeholder:text-black/30 text-black font-medium"
-                  />
-                </div>
+      {/* ---------------- CONTENT ---------------- */}
+      <div className="bg-background">
+        <div className="container-content py-16">
+          {/* FILTER + SEARCH */}
+          <div className="bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-6 mb-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-1 p-1 bg-muted rounded-xl w-fit">
+                {(["ALL", "LIVE", "COMPLETED"] as FilterStatus[]).map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => setFilter(status)}
+                    className={cn(
+                      "px-6 py-2 rounded-lg text-sm font-bold transition-all",
+                      filter === status
+                        ? "bg-background shadow-sm"
+                        : "text-muted-foreground hover:bg-muted/60"
+                    )}
+                  >
+                    {status === "ALL" && "All"}
+                    {status === "LIVE" && "Live"}
+                    {status === "COMPLETED" && "Finished"}
+                  </button>
+                ))}
               </div>
 
-              {/* Sync Status */}
-              <div className="flex items-center gap-2 mt-5 text-[10px] uppercase tracking-[0.2em] text-black/40 font-black">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-live opacity-40 animate-ping" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
-                </span>
-                Live Data Feed Active
-              </div>
-            </div>
-
-            {/* MATCH GRID */}
-            {isLoading ? (
-              <div className="min-h-[400px] flex items-center justify-center">
-                <LoadingState message="Connecting to live data stream..." />
-              </div>
-            ) : error ? (
-              <div className="min-h-[400px]">
-                <ErrorState
-                  message="Data synchronization failed"
-                  onRetry={() => {
-                    refetchLive();
-                    refetchSchedules();
-                  }}
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search teams, leagues, or city…"
+                  className="w-full pl-12 pr-4 py-3 bg-muted border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 outline-none"
                 />
               </div>
-            ) : filteredMatches.length === 0 ? (
-              <div className="text-center py-32 bg-white/40 backdrop-blur-md border border-dashed border-black/10 rounded-3xl">
-                <AlertTriangle className="h-12 w-12 text-black/20 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-black/60">No Matches Found</h3>
-                <p className="text-black/40 font-medium">
-                  {searchQuery
-                    ? "Try adjusting your search terms."
-                    : "No matches are currently active or completed."}
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredMatches.map((match) =>
-                  match._type === "live" ? (
-                    <LiveMatchCard key={match.match_id} match={match} />
-                  ) : (
-                    <MatchCard key={match.match_id} match={match} />
-                  )
-                )}
-              </div>
-            )}
+            </div>
           </div>
-        </section>
+
+          {/* MATCH GRID */}
+          {isLoading ? (
+            <div className="min-h-[400px] flex items-center justify-center">
+              <LoadingState message="Loading live data…" />
+            </div>
+          ) : error ? (
+            <ErrorState
+              message="Unable to load live scores"
+              onRetry={() => {
+                refetchLive();
+                refetchSchedules();
+              }}
+            />
+          ) : filteredMatches.length === 0 ? (
+            <div className="text-center py-24 border border-dashed rounded-3xl">
+              <AlertTriangle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-bold">No Matches Found</h3>
+              <p className="text-muted-foreground">
+                {searchQuery
+                  ? "Try adjusting your search."
+                  : "No matches are live or completed."}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredMatches.map((match) =>
+                match._type === "live" ? (
+                  <LiveMatchCard key={match.match_id} match={match} />
+                ) : (
+                  <MatchCard key={match.match_id} match={match} />
+                )
+              )}
+            </div>
+          )}
+        </div>
       </div>
-      {/* Footer will now naturally appear here in your App.tsx layout */}
     </>
   );
 }

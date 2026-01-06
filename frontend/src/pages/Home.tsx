@@ -91,10 +91,10 @@ export default function Home() {
           <div className="absolute top-20 left-0 right-0 z-30 py-6">
             <div className="container-content">
               <div className="relative">
-                {tickerMatches.length > 4 && (
+                {tickerMatches.length > 3 && (
                   <button
                     onClick={scrollLeft}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all"
                     aria-label="Scroll left"
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -105,7 +105,7 @@ export default function Home() {
                   ref={scrollContainerRef}
                   className={cn(
                     "flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth",
-                    tickerMatches.length <= 4 ? "justify-center" : "px-12"
+                    tickerMatches.length <= 3 ? "justify-center" : "px-12"
                   )}
                 >
                   {tickerMatches.map((match, idx) => (
@@ -118,10 +118,10 @@ export default function Home() {
                   ))}
                 </div>
 
-                {tickerMatches.length > 4 && (
+                {tickerMatches.length > 3 && (
                   <button
                     onClick={scrollRight}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all"
                     aria-label="Scroll right"
                   >
                     <ChevronRight className="h-5 w-5" />
