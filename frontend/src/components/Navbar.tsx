@@ -109,18 +109,19 @@ export default function Navbar({
         {mobileMenuOpen && (
           <div
             className={cn(
-              "md:hidden py-4 border-t",
-              isScrolled ? "border-border/50" : "border-white/10"
+              "md:hidden py-4 border-t px-2 mt-2 rounded-xl mx-2", // Added some padding/rounding for a better look
+              "backdrop-blur-xl shadow-2xl", // Increased blur for better readability
+              isScrolled 
+                ? "bg-slate-950/80 border-border/50" // Darker translucent background when scrolled
+                : "bg-black/60 border-white/10"      // Darker translucent background when on transparent hero
             )}
           >
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1"> {/* Reduced gap for tighter look */}
               <NavLink
                 to="/live"
                 className={cn(
-                  "px-3 py-2 rounded-lg transition-colors",
-                  isScrolled
-                    ? "!text-foreground hover:!bg-muted"
-                    : "!text-white hover:!bg-white/10"
+                  "px-4 py-3 rounded-lg transition-colors font-medium",
+                  "text-white hover:bg-white/10" // Force white text for better contrast against dark bg
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -130,27 +131,25 @@ export default function Navbar({
               <NavLink
                 to="/schedule"
                 className={cn(
-                  "px-3 py-2 rounded-lg transition-colors",
-                  isScrolled
-                    ? "!text-foreground hover:!bg-muted"
-                    : "!text-white hover:!bg-white/10"
+                  "px-4 py-3 rounded-lg transition-colors font-medium",
+                  "text-white hover:bg-white/10"
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Schedule
               </NavLink>
 
-              <button
-                onClick={handleWaitlistClick}
-                className={cn(
-                  "w-full px-4 py-2 rounded-lg text-sm font-medium text-left transition-colors",
-                  isScrolled
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                    : "bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 border border-white/20"
-                )}
-              >
-                Join Waitlist
-              </button>
+              <div className="pt-2 px-1">
+                <button
+                  onClick={handleWaitlistClick}
+                  className={cn(
+                    "w-full px-4 py-3 rounded-lg text-sm font-bold text-center transition-all",
+                    "bg-primary text-primary-foreground hover:brightness-110 shadow-lg"
+                  )}
+                >
+                  Join Waitlist
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -88,7 +88,7 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
       </div>
 
       {/* Teams and Scores */}
-      <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
         {/* Team 1 */}
         <div className="flex items-center gap-3">
           {team1Logo ? (
@@ -103,7 +103,7 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground truncate text-lg">
+            <p className="font-semibold text-foreground text-base md:text-lg break-words leading-tight">
               {team1.name}
             </p>
             {!isUpcoming && (
@@ -118,7 +118,7 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
         <div className="text-muted-foreground/50 font-bold text-xl px-3">VS</div>
 
         {/* Team 2 */}
-        <div className="flex items-center gap-3 flex-row-reverse text-right">
+        <div className="flex items-center gap-3 md:flex-row-reverse md:text-right">
           {team2Logo ? (
             <img 
               src={team2Logo} 
