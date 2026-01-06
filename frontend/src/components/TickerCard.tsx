@@ -32,21 +32,27 @@ export default function TickerCard({
   return (
     <Link
       to={link}
-      className="flex-shrink-0 w-[320px] bg-white border border-gray-200 rounded-md hover:shadow-md transition"
+      className={cn(
+        "flex-shrink-0 w-[320px] rounded-xl transition-all duration-200",
+        "bg-black/30 backdrop-blur-md",
+        "border border-white/10",
+        "shadow-lg shadow-black/40",
+        "hover:bg-black/65 hover:shadow-xl"
+      )}
     >
       {/* Header */}
-      <div className="px-3 py-1.5 border-b border-gray-100 flex justify-between items-center">
+      <div className="px-3 py-1.5 border-b border-white/20 flex justify-between items-center">
         <span
           className={cn(
-            "text-xs font-semibold uppercase",
-            isLive && "text-red-600",
-            isFinished && "text-gray-700",
-            isUpcoming && "text-orange-600"
+            "text-xs font-semibold uppercase tracking-wide",
+            isLive && "text-red-500",
+            isFinished && "text-gray-200",
+            isUpcoming && "text-orange-400"
           )}
         >
           {match.match_status}
         </span>
-        <span className="text-[10px] text-gray-500 uppercase">
+        <span className="text-[10px] text-gray-300 uppercase">
           {match.venue.city}
         </span>
       </div>
@@ -64,22 +70,25 @@ export default function TickerCard({
             <span
               className={cn(
                 "text-sm truncate",
-                team1Won ? "font-extrabold text-gray-900" : "font-medium text-gray-500"
+                team1Won
+                  ? "font-semibold text-white"
+                  : "font-medium text-gray-300"
               )}
             >
               {team1.name}
             </span>
           </div>
+
           {!isUpcoming && (
-          <span
-            className={cn(
-              "text-sm font-semibold",
-              team1Won ? "text-gray-900" : "text-gray-500"
-            )}
-          >
-            {match.scores.first_innings?.score ?? "—"}
-          </span>
-        )}
+            <span
+              className={cn(
+                "text-sm font-semibold",
+                team1Won ? "text-white" : "text-gray-300"
+              )}
+            >
+              {match.scores.first_innings?.score ?? "—"}
+            </span>
+          )}
         </div>
 
         {/* Team 2 */}
@@ -93,29 +102,31 @@ export default function TickerCard({
             <span
               className={cn(
                 "text-sm truncate",
-                team2Won ? "font-extrabold text-gray-900" : "font-medium text-gray-500"
+                team2Won
+                  ? "font-semibold text-white"
+                  : "font-medium text-gray-300"
               )}
             >
               {team2.name}
             </span>
           </div>
-          {!isUpcoming && (
-          <span
-            className={cn(
-              "text-sm font-semibold",
-              team2Won ? "text-gray-900" : "text-gray-500"
-            )}
-          >
-            {match.scores.second_innings?.score ??
-              (isLive ? "Yet to bat" : "—")}
-          </span>
-        )}
 
+          {!isUpcoming && (
+            <span
+              className={cn(
+                "text-sm font-semibold",
+                team2Won ? "text-white" : "text-gray-300"
+              )}
+            >
+              {match.scores.second_innings?.score ??
+                (isLive ? "Yet to bat" : "—")}
+            </span>
+          )}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="px-3 py-1.5 border-t border-gray-100 text-center text-[11px] text-gray-600">
+      <div className="px-3 py-1.5 border-t border-white/20 text-center text-[11px] text-gray-300">
         {isFinished && match.result}
         {isUpcoming && formatMatchTime(match.start_time)}
         {isLive &&

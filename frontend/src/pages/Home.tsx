@@ -141,7 +141,7 @@ export default function Home() {
               </h1>
               <p className="text-white/90 text-xl md:text-2xl leading-relaxed max-w-3xl">
                 Your Cricket Command Center. Live scores, expert analysis, and intelligent
-                discussions — clarity over noise.
+                discussions - clarity over noise.
               </p>
             </div>
           </div>
