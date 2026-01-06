@@ -94,7 +94,7 @@ export default function Home() {
                 {tickerMatches.length > 3 && (
                   <button
                     onClick={scrollLeft}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all hidden lg:block"
                     aria-label="Scroll left"
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -121,7 +121,7 @@ export default function Home() {
                 {tickerMatches.length > 3 && (
                   <button
                     onClick={scrollRight}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm border border-white/20 rounded-full p-2 shadow-lg hover:bg-white transition-all hidden lg:block"
                     aria-label="Scroll right"
                   >
                     <ChevronRight className="h-5 w-5" />
