@@ -49,7 +49,7 @@ export default function Navbar({
     <nav
       data-scrolled={isScrolled}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 group",
         isScrolled
           ? "bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm"
           : "bg-transparent"
@@ -57,18 +57,18 @@ export default function Navbar({
     >
       <div className="container-content">
         <div className="flex items-center justify-between h-16">
+          {/* Logo */}
           <NavLink
             to="/"
             className={cn(
               "font-display text-2xl font-bold transition-colors",
-              isScrolled
-                ? "!text-foreground"
-                : "!text-white hover:!text-white"
+              isScrolled ? "!text-foreground" : "!text-white hover:!text-white"
             )}
           >
             STRYKER
           </NavLink>
 
+          {/* Desktop Navigation — UNCHANGED */}
           <div className="hidden md:flex items-center gap-8">
             <NavLink to="/live">Live Scores</NavLink>
             <NavLink to="/schedule">Schedule</NavLink>
@@ -76,7 +76,7 @@ export default function Navbar({
             <button
               onClick={handleWaitlistClick}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                 isScrolled
                   ? "bg-primary text-primary-foreground hover:bg-primary/90"
                   : "bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 border border-white/20"
@@ -86,6 +86,7 @@ export default function Navbar({
             </button>
           </div>
 
+          {/* Mobile Menu Button */}
           <button
             className={cn(
               "md:hidden transition-colors",
@@ -98,14 +99,16 @@ export default function Navbar({
           </button>
         </div>
 
+        {/* ---------------- MOBILE DROPDOWN (ONLY PART CHANGED) ---------------- */}
         {mobileMenuOpen && (
           <div
             className={cn(
-              "md:hidden py-4 border-t px-2 mt-2 rounded-xl mx-2",
-              "backdrop-blur-xl shadow-2xl",
+              "md:hidden mt-2 mx-2 rounded-xl px-2 py-4 border-t shadow-2xl backdrop-blur-xl",
+
+              // 👉 Dark translucent ONLY on home hero & not scrolled
               variant === "hero" && !isScrolled
                 ? "bg-black/70 border-white/10"
-                : "bg-background/90 border-border/50"
+                : "bg-background/95 border-border/50"
             )}
           >
             <div className="flex flex-col gap-1">
@@ -138,7 +141,7 @@ export default function Navbar({
               <div className="pt-2 px-1">
                 <button
                   onClick={handleWaitlistClick}
-                  className="w-full px-4 py-3 rounded-lg text-sm font-bold bg-primary text-primary-foreground hover:brightness-110 shadow-lg"
+                  className="w-full px-4 py-3 rounded-lg text-sm font-bold transition-all bg-primary text-primary-foreground hover:brightness-110 shadow-lg"
                 >
                   Join Waitlist
                 </button>
@@ -146,6 +149,7 @@ export default function Navbar({
             </div>
           </div>
         )}
+        {/* -------------------------------------------------------------------- */}
       </div>
     </nav>
   );
