@@ -1,43 +1,106 @@
 // frontend/src/lib/types.ts
 
-export type MatchStatus = "LIVE" | "UPCOMING" | "FINISHED";
+export type MatchStatus = "LIVE" | "UPCOMING" | "FINISHED" | "NS" | "Finished" | "Aban.";
 
-/* ---------- Shared (Backend-Aligned) ---------- */
+/* ---------- Core Types ---------- */
 
 export interface Team {
   id: number;
   name: string;
+  short_name?: string;
+  code?: string;
+  logo?: string;
+  image_path?: string;
+  country_id?: number;
+  national_team?: boolean;
 }
 
 export interface League {
   id: number;
   name: string;
+  code?: string;
+  image_path?: string;
+  season_id?: number;
+  country_id?: number;
+  type?: string;
 }
 
 export interface Venue {
   id: number;
   name: string;
-  city?: string;
+  city: string;
+  image_path?: string;
+  capacity?: number;
+  floodlight?: boolean;
 }
 
-/* ---------- Schedule (Backend-Aligned) ---------- */
+/* ---------- LiveScore API Types (/api/v1/matches/livescore) ---------- */
+
+export interface Toss {
+  won_by_team_id: number | null;
+  elected: 'bat' | 'bowl' | null;
+}
+
+export interface InningsScore {
+  team_id: number;
+  score: string; // e.g., "118/7"
+  overs: string; // e.g., "18.4"
+}
+
+export interface LiveScoreMatch {
+  match_id: string;
+  match_status: 'LIVE' | 'FINISHED' | 'NS';
+  innings_phase: 'FIRST_INNINGS' | 'SECOND_INNINGS' | 'COMPLETED' | 'NS';
+  start_time: string;
+  result: string | null;
+  teams: {
+    batting_first: Team;
+    batting_second: Team;
+  };
+  scores: {
+    first_innings: InningsScore | null;
+    second_innings: InningsScore | null;
+    current: InningsScore | null;
+  };
+  toss: Toss;
+  venue: Venue;
+}
+
+/* ---------- Schedule API Types (/api/v1/schedules) ---------- */
+
+export interface ScheduleMatch {
+  id: number;
+  match_id: string;
+  status: 'Finished' | 'NS' | 'Aban.' | string;
+  title: string;
+  league: League;
+  home_team: Team;
+  away_team: Team;
+  home_score: string | null;
+  away_score: string | null;
+  result_note: string | null;
+  start_time: string;
+  venue: Venue;
+  match_type: string;
+  updated_at?: string;
+}
+
+/* ---------- Combined Match Type ---------- */
+
+export type CombinedMatch = 
+  | (LiveScoreMatch & { _type: 'live' })
+  | (ScheduleMatch & { _type: 'finished' });
+
+/* ---------- Filter Types ---------- */
+
+export type FilterStatus = 'ALL' | 'LIVE' | 'COMPLETED';
+
+/* ---------- Legacy Types (for backward compatibility) ---------- */
 
 export interface MatchTeams {
   home: Team;
   away: Team;
 }
-
-export interface ScheduleMatch {
-  match_id: number;
-  season_id: number;
-  league: League;
-  start_time: string;
-  venue: Venue;
-  teams: MatchTeams;
-  status: MatchStatus;
-}
-
-/* ---------- Live (Backend-Aligned) ---------- */
 
 export interface LiveScore {
   runs: number;
@@ -55,7 +118,7 @@ export interface LiveMatch {
   last_updated: string;
 }
 
-/* ---------- Events (Backend-Aligned) ---------- */
+/* ---------- Events ---------- */
 
 export type EventType =
   | "WICKET"
@@ -67,12 +130,12 @@ export type EventType =
   | "MATCH_END";
 
 export interface MatchEvent {
-  match_id: number;  // ✅ Changed from `number | string` to just `number`
+  match_id: number;
   event_type: EventType;
   description: string;
   timestamp: string;
   inning: number;
-  over: number;  // ✅ Changed from `over: number` (backend uses float but TS number works)
+  over: number;
 }
 
 /* ---------- Mock Data Types (Keep for Phase 1) ---------- */
@@ -102,7 +165,7 @@ export interface NewsItem {
 
 export interface DiscussionPost {
   id: string;
-  matchId?: number;  // ✅ Changed from `string` to `number` for consistency
+  matchId?: number;
   author: {
     name: string;
     avatar?: string;

@@ -36,4 +36,7 @@ export async function fetchPlayerStats(playerId: string): Promise<ApiPlayerStats
 export const endpoints = {
   schedules: "/api/v1/schedules",
   liveMatches: "/api/v1/matches/live",
+
+  // NEW — unified ticker endpoint
+  liveScores: "/api/v1/matches/livescore",
 };

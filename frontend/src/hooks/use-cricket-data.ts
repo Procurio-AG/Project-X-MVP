@@ -34,6 +34,7 @@ export function useSchedules() {
     queryKey: ["schedules"],
     queryFn: async () => {
       const res = await api.get("/api/v1/schedules");
+      console.log("SCHEDULE - ", res.data);
       return res.data.data; 
     },
   });
@@ -49,6 +50,7 @@ export function useLiveMatch(matchId: number | undefined) {
     queryKey: ["live-match", matchId],
     queryFn: async () => {
       const res = await api.get(`/api/v1/matches/${matchId}/live`);
+      console.log(" /api/v1/matches/${matchId}/live- ", res.data);
       return res.data; 
     },
     enabled: typeof matchId === "number",
@@ -140,5 +142,19 @@ export function useMatchTeams(matchId: number | undefined) {
       return match?.teams ?? null;
     },
     enabled: !!matchId,
+  });
+}
+
+/* ---------------- LIVE SCORE TICKER ---------------- */
+
+export function useLiveScores(options?: { refetchInterval?: number }) {
+  return useQuery<any[]>({
+    queryKey: ["live-scores"],
+    queryFn: async () => {
+      const res = await api.get("/api/v1/matches/livescore");
+      console.log("/api/v1/matches/livescore -", res.data);
+      return res.data;
+    },
+    refetchInterval: options?.refetchInterval ?? 30000,
   });
 }

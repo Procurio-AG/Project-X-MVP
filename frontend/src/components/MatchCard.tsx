@@ -1,168 +1,95 @@
 import { Link } from "react-router-dom";
-import { cn, formatMatchTime } from "@/lib/utils";
-import type { Match } from "@/lib/types";
-import { AlertTriangle, ChevronRight, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
+import { formatMatchTime, getTeamLogoUrl } from "@/lib/utils";
+import type { ScheduleMatch } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 interface MatchCardProps {
-  match: Match;
-  variant?: "compact" | "full";
+  match: ScheduleMatch & { _type: "finished" };
 }
 
-/**
- * Canonical routing logic
- * LIVE      -> /match/:id        (rich detail view)
- * FINISHED  -> /match/:id/result
- * UPCOMING  -> /match/:id/schedule
- */
-function getMatchLink(match: Match) {
-  const status = match.status?.toLowerCase() ?? "";
-  const matchId = match.match_id ?? match.id;
+export default function MatchCard({ match }: MatchCardProps) {
+  const homeLogo = getTeamLogoUrl(match.home_team);
+  const awayLogo = getTeamLogoUrl(match.away_team);
 
-  if (!matchId) return "#";
-
-  if (status === "finished") {
-    return `/match/${matchId}/result`;
-  }
-
-  if (status === "ns" || status === "upcoming") {
-    return `/match/${matchId}/schedule`;
-  }
-
-  // LIVE match → rich detail page
-  return `/match/${matchId}`;
-}
-
-export default function MatchCard({ match, variant = "full" }: MatchCardProps) {
-  const statusLower = match.status?.toLowerCase() ?? "";
-  const isUpcoming = statusLower === "ns" || statusLower === "upcoming";
-  const isFinished = statusLower === "finished";
-  const isLive = !isUpcoming && !isFinished;
+  const homeWon = match.result_note?.includes(match.home_team.name);
+  const awayWon = match.result_note?.includes(match.away_team.name);
 
   return (
     <Link
-      to={getMatchLink(match)}
-      className={cn(
-        "block bg-card rounded-lg border border-border card-hover overflow-hidden",
-        variant === "compact" ? "p-4" : "p-5"
-      )}
+      to={`/match/${match.match_id}/result`}
+      className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium",
-              isLive && "bg-live text-live-foreground",
-              isUpcoming && "bg-muted text-muted-foreground",
-              isFinished && "bg-accent/10 text-accent"
-            )}
-          >
-            {isLive && (
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-live-foreground opacity-75 animate-ping" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-live-foreground" />
-              </span>
-            )}
-            {match.status}
-          </span>
-
-          {match.importance === "HIGH" && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-highlight/20 text-highlight-foreground text-xs font-medium">
-              <AlertTriangle className="h-3 w-3" />
-              Key Match
-            </span>
-          )}
-        </div>
-
-        <span className="text-xs text-muted-foreground">
-          {match.format ?? match.match_type ?? "—"}
+        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+          <Clock className="h-3 w-3" />
+          Completed
+        </span>
+        <span className="text-xs text-gray-500">
+          {formatMatchTime(match.start_time)}
         </span>
       </div>
 
-      {/* League & Venue */}
-      <p className="text-xs text-muted-foreground mb-3 line-clamp-1">
-        {match.league?.name ?? "—"} • {match.venue?.name ?? "Venue TBC"}
+      {/* Venue */}
+      <p className="text-xs text-gray-500 mb-3">
+        {match.league.name} • {match.venue.city}
       </p>
 
       {/* Teams */}
-      <div className="space-y-2">
-        <TeamRow
-          team={match.home_team}
-          innings={match.innings?.find(
-            (i) => i.team?.id === match.home_team?.id
-          )}
-        />
-        <TeamRow
-          team={match.away_team}
-          innings={match.innings?.find(
-            (i) => i.team?.id === match.away_team?.id
-          )}
-        />
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+        {/* Home */}
+        <div className="flex items-center gap-3">
+          <img
+            src={homeLogo ?? ""}
+            alt={match.home_team.name}
+            className="w-12 h-12 object-contain"
+          />
+          <div>
+            <div
+              className={cn(
+                "text-lg font-bold",
+                homeWon ? "text-green-700" : "text-gray-600"
+              )}
+            >
+              {match.home_score || "—"}
+            </div>
+            <div className="text-xs text-gray-500">
+              {match.home_team.name}
+            </div>
+          </div>
+        </div>
+
+        {/* VS */}
+        <div className="text-gray-300 text-sm font-semibold">VS</div>
+
+        {/* Away */}
+        <div className="flex items-center gap-3 justify-end text-right">
+          <div>
+            <div
+              className={cn(
+                "text-lg font-bold",
+                awayWon ? "text-green-700" : "text-gray-600"
+              )}
+            >
+              {match.away_score || "—"}
+            </div>
+            <div className="text-xs text-gray-500">
+              {match.away_team.name}
+            </div>
+          </div>
+          <img
+            src={awayLogo ?? ""}
+            alt={match.away_team.name}
+            className="w-12 h-12 object-contain"
+          />
+        </div>
       </div>
 
-      {/* Footer */}
-      <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-        <p
-          className={cn(
-            "text-sm",
-            isLive ? "text-foreground font-medium" : "text-muted-foreground"
-          )}
-        >
-          {isUpcoming ? (
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5" />
-              {formatMatchTime(match.start_time)}
-            </span>
-          ) : (
-            match.statusText ?? match.status
-          )}
-        </p>
-        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      {/* Result */}
+      <div className="mt-4 text-center bg-gray-50 rounded-lg py-2 text-sm font-medium text-gray-900">
+        {match.result_note}
       </div>
-
-      {match.context && (
-        <p className="mt-2 text-xs text-accent font-medium">
-          {match.context}
-        </p>
-      )}
     </Link>
-  );
-}
-
-function TeamRow({
-  team,
-  innings,
-}: {
-  team: Match["home_team"] | Match["away_team"];
-  innings?: Match["innings"] extends (infer I)[] ? I : never;
-}) {
-  if (!team) {
-    return (
-      <div className="flex items-center py-1 text-sm text-muted-foreground">
-        TBC
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-center justify-between py-1">
-      <div className="flex items-center gap-2">
-        <div className="w-6 h-4 rounded bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground">
-          {team.short_name ?? team.code ?? "—"}
-        </div>
-        <span className="text-sm text-foreground">{team.name ?? "TBC"}</span>
-      </div>
-
-      {innings && (
-        <div className="text-right">
-          <span className="text-sm font-semibold text-foreground">
-            {innings.runs}/{innings.wickets}
-          </span>
-          <span className="text-xs text-muted-foreground ml-1.5">
-            ({innings.overs})
-          </span>
-        </div>
-      )}
-    </div>
   );
 }
