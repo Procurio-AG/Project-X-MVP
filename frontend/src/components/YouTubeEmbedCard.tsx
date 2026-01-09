@@ -1,14 +1,28 @@
-// frontend/src/components/YouTubeEmbedCard.tsx
-
 import { Eye, ExternalLink } from "lucide-react";
 import type { EngagementPost } from "@/hooks/use-cricket-data";
 
 interface YouTubeEmbedCardProps {
   post: EngagementPost;
+  minimal?: boolean; // Add this prop for the hero view
 }
 
-export default function YouTubeEmbedCard({ post }: YouTubeEmbedCardProps) {
+export default function YouTubeEmbedCard({ post, minimal = false }: YouTubeEmbedCardProps) {
   const embedUrl = post.media?.find(m => m.type === "embed")?.url;
+
+  if (minimal) {
+    return (
+      <div className="w-full h-full relative">
+        {embedUrl && (
+          <iframe
+            src={embedUrl}
+            className="absolute inset-0 w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        )}
+      </div>
+    );
+  }
 
   const formatNumber = (num: number) => {
     if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;

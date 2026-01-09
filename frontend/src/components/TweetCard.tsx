@@ -62,7 +62,7 @@ export default function TweetCard({ post }: TweetCardProps) {
 
       {/* Text */}
       {post.text && (
-        <p className="text-foreground text-sm mb-3 whitespace-pre-wrap break-words">
+        <p className="text-foreground text-sm mb-3 whitespace-pre-wrap break-words line-clamp-3 min-h-[3rem]">
           {post.text}
         </p>
       )}

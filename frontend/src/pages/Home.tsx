@@ -278,67 +278,61 @@ export default function Home() {
 
 
 
-      {/* ========== 3. ENGAGEMENT FEED SECTION ========== */}
-      <section className="py-16 bg-background">
-        <div className="container-content">
-          <div className="flex items-center gap-2 mb-8">
-            <Sparkles className="h-6 w-6 text-accent" />
-            <h2 className="font-display text-3xl font-bold text-foreground">
-              Cricket Buzz
-            </h2>
-          </div>
+{/* ========== 3. ENGAGEMENT FEED SECTION (STATIC 3-CARD GRID) ========== */}
+<section className="py-16 bg-muted/30">
+  <div className="container-content">
+    {/* Section Header */}
+    <div className="flex items-center gap-2 mb-8 uppercase tracking-tighter">
+      <Sparkles className="h-5 w-5 text-accent" />
+      <h2 className="font-display text-4xl font-black text-foreground">
+        Cricket Buzz
+      </h2>
+    </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[4fr_3fr] gap-8">
-            {/* Left 50% - Pinterest-style Tweet Mosaic */}
-            <div>
-              <h3 className="font-semibold text-lg mb-4 text-foreground">
-                Latest from X (Twitter)
-              </h3>
-
-              {engagementLoading ? (
-                <LoadingState message="Loading tweets..." />
-              ) : engagementError ? (
-                <ErrorState message="Unable to load tweets" />
-              ) : twitterPosts.length === 0 ? (
-                <EmptyState
-                  title="No tweets available"
-                  message="Check back later for cricket buzz."
-                />
-              ) : (
-                <div className="columns-1 sm:columns-2 gap-4">
-                  {twitterPosts.slice(0, 4).map((post) => (
-                    <div
-                      key={post.id}
-                      className="mb-4 break-inside-avoid rounded-2xl overflow-hidden
-                  transform transition-all duration-300
-                  hover:-translate-y-1 hover:shadow-xl"
-                    >
-                      <TweetCard post={post} />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-
-            {/* Right 50% - YouTube Video */}
-            <div>
-              <h3 className="font-semibold text-lg mb-4 text-foreground">
-                Featured Video
-              </h3>
-
-              {!featuredYouTubeVideo ? (
-                <EmptyState
-                  title="No video available"
-                  message="Check back later for highlights."
-                />
-              ) : (
-                <YouTubeEmbedCard post={featuredYouTubeVideo} />
-              )}
-            </div>
-          </div>
+    <div className="flex flex-col gap-10">
+      {/* Top Section: Hero Video */}
+      <div className="relative">
+        <h3 className="text-xs font-bold text-muted-foreground mb-3 uppercase tracking-[0.2em]">
+          Featured Video
+        </h3>
+        <div className="rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl border border-border bg-black aspect-video lg:aspect-[21/9] w-full relative">
+          {!featuredYouTubeVideo ? (
+            <EmptyState title="No video available" message="Check back later." />
+          ) : (
+            <YouTubeEmbedCard post={featuredYouTubeVideo} minimal={true} />
+          )}
         </div>
-      </section>
+      </div>
+
+      {/* Bottom Section: Static 3-Card Grid */}
+      <div>
+        <h3 className="text-xs font-bold text-muted-foreground mb-6 uppercase tracking-[0.2em]">
+          Latest from X (formerly Twitter)
+        </h3>
+
+        {engagementLoading ? (
+          <LoadingState message="Loading tweets..." />
+        ) : twitterPosts.length === 0 ? (
+          <EmptyState title="No tweets available" />
+        ) : (
+          /* Switched from overflow-x-auto to a standard grid */
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {twitterPosts.slice(0, 3).map((post) => (
+              <div
+                key={post.id}
+                className="flex h-full"
+              >
+                <div className="w-full bg-card rounded-2xl border border-border flex flex-col shadow-sm hover:border-accent/40 transition-all">
+                  <TweetCard post={post} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
 
 
       {/* ========== 4. DISCUSSIONS TICKER ========== */}
