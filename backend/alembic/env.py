@@ -11,6 +11,8 @@ from app.core.config import settings
 from app.infrastructure.db import Base
 from app.models.sql_match import Match 
 from app.models.sql_signup import EmailSignup 
+from app.models.sql_engagement import EngagementPost
+from app.models.sql_news import NewsArticle
 
 config = context.config
 
