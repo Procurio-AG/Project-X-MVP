@@ -45,7 +45,7 @@ export default function Home() {
     error: engagementError,
   } = useInfiniteEngagementFeed({
     source: "twitter",
-    limit: 20,
+    limit: 3,
   });
 
   const twitterPosts = useMemo(
@@ -63,11 +63,11 @@ export default function Home() {
     data: youtubePages,
   } = useInfiniteEngagementFeed({
     source: "youtube",
-    limit: 5,
+    limit: 2,
   });
 
   const featuredYouTubeVideo = useMemo(
-    () => youtubePages?.pages[0]?.data[0],
+    () => youtubePages?.pages[0]?.data[1],
     [youtubePages]
   );
 
@@ -278,61 +278,61 @@ export default function Home() {
 
 
 
-{/* ========== 3. ENGAGEMENT FEED SECTION (STATIC 3-CARD GRID) ========== */}
-<section className="py-16 bg-muted/30">
-  <div className="container-content">
-    {/* Section Header */}
-    <div className="flex items-center gap-2 mb-8 uppercase tracking-tighter">
-      <Sparkles className="h-5 w-5 text-accent" />
-      <h2 className="font-display text-4xl font-black text-foreground">
-        Cricket Buzz
-      </h2>
-    </div>
-
-    <div className="flex flex-col gap-10">
-      {/* Top Section: Hero Video */}
-      <div className="relative">
-        <h3 className="text-xs font-bold text-muted-foreground mb-3 uppercase tracking-[0.2em]">
-          Featured Video
-        </h3>
-        <div className="rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl border border-border bg-black aspect-video lg:aspect-[21/9] w-full relative">
-          {!featuredYouTubeVideo ? (
-            <EmptyState title="No video available" message="Check back later." />
-          ) : (
-            <YouTubeEmbedCard post={featuredYouTubeVideo} minimal={true} />
-          )}
-        </div>
-      </div>
-
-      {/* Bottom Section: Static 3-Card Grid */}
-      <div>
-        <h3 className="text-xs font-bold text-muted-foreground mb-6 uppercase tracking-[0.2em]">
-          Latest from X (formerly Twitter)
-        </h3>
-
-        {engagementLoading ? (
-          <LoadingState message="Loading tweets..." />
-        ) : twitterPosts.length === 0 ? (
-          <EmptyState title="No tweets available" />
-        ) : (
-          /* Switched from overflow-x-auto to a standard grid */
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {twitterPosts.slice(0, 3).map((post) => (
-              <div
-                key={post.id}
-                className="flex h-full"
-              >
-                <div className="w-full bg-card rounded-2xl border border-border flex flex-col shadow-sm hover:border-accent/40 transition-all">
-                  <TweetCard post={post} />
-                </div>
-              </div>
-            ))}
+      {/* ========== 3. ENGAGEMENT FEED SECTION (STATIC 3-CARD GRID) ========== */}
+      <section className="py-16 bg-muted/30">
+        <div className="container-content">
+          {/* Section Header */}
+          <div className="flex items-center gap-2 mb-8 tracking-tighter">
+            <Sparkles className="h-5 w-5 text-accent" />
+            <h2 className="font-display text-2xl font-black text-foreground">
+              Cricket Buzz
+            </h2>
           </div>
-        )}
-      </div>
-    </div>
-  </div>
-</section>
+
+          <div className="flex flex-col gap-10">
+            {/* Top Section: Hero Video */}
+            <div className="relative">
+              <h3 className="text-xs font-bold text-muted-foreground mb-3 uppercase tracking-[0.2em]">
+                Featured Video
+              </h3>
+              <div className="rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl border border-border bg-black aspect-video lg:aspect-[21/9] w-full relative">
+                {!featuredYouTubeVideo ? (
+                  <EmptyState title="No video available" message="Check back later." />
+                ) : (
+                  <YouTubeEmbedCard post={featuredYouTubeVideo} minimal={true} />
+                )}
+              </div>
+            </div>
+
+            {/* Bottom Section: Static 3-Card Grid */}
+            <div>
+              <h3 className="text-xs font-bold text-muted-foreground mb-6 uppercase tracking-[0.2em]">
+                Latest from X (formerly Twitter)
+              </h3>
+
+              {engagementLoading ? (
+                <LoadingState message="Loading tweets..." />
+              ) : twitterPosts.length === 0 ? (
+                <EmptyState title="No tweets available" />
+              ) : (
+                /* Switched from overflow-x-auto to a standard grid */
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {twitterPosts.slice(0, 3).map((post) => (
+                    <div
+                      key={post.id}
+                      className="flex h-full"
+                    >
+                      <div className="w-full bg-card rounded-2xl border border-border flex flex-col shadow-sm hover:border-accent/40 transition-all">
+                        <TweetCard post={post} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
 
       {/* ========== 4. DISCUSSIONS TICKER ========== */}

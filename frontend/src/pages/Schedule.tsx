@@ -57,31 +57,33 @@ export default function Schedule() {
       </Helmet>
 
       {/* HERO */}
-      <section className="relative h-[45vh] min-h-[360px] w-full overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1730739628981-6537b299aea3?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            className="w-full h-full object-cover"
-            alt="Cricket stadium"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background/95" />
+      {/* ---------------- HERO (Editorial Command Style) ---------------- */}
+      <section className="relative h-[30vh] min-h-[280px] w-full overflow-hidden bg-[#F8FAFC]">
+        {/* Aesthetic Background Elements matching Firehose */}
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-200/50 to-transparent -z-10" />
+        <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] -z-10" />
 
         <div className="absolute inset-0 flex items-center z-10">
-          <div className="container-content">
-            <div className="max-w-3xl">
-              <div className="flex items-center gap-3 mb-4">
-                <Calendar className="h-6 w-6 text-white" />
-                <span className="text-white/80 uppercase tracking-widest text-xs font-bold">
-                  Fixtures
+          <div className="container-content pt-6">
+            <div className="max-w-4xl space-y-4">
+              {/* Intelligence Stream Label */}
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-lg">
+                  <Calendar className="h-5 w-5 text-accent animate-pulse" />
+                </div>
+                <span className="text-accent font-bold tracking-[0.4em] text-[10px] uppercase">
+                  Global Fixtures
                 </span>
               </div>
-              <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-                Match Schedule
+
+              {/* Big Bold Typography */}
+              <h1 className="font-display text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none text-slate-900">
+                Match <span className="text-transparent bg-clip-text bg-gradient-to-b from-slate-400 to-slate-100">Schedule</span>
               </h1>
-              <p className="text-white/100 text-lg">
-                Upcoming fixtures from leagues around the world. All times shown
-                in your local timezone.
+
+              {/* Refined Description */}
+              <p className="text-slate-500 max-w-2xl font-medium leading-relaxed text-lg">
+                Upcoming fixtures from leagues around the world. Synced to your local timezone for total clarity.
               </p>
             </div>
           </div>
@@ -89,7 +91,7 @@ export default function Schedule() {
       </section>
 
       {/* CONTENT */}
-      <div className="bg-background">
+      <div className="bg-[#F8FAFC] pb-20">
         <div className="container-content py-16">
           {isLoading ? (
             <LoadingState message="Loading schedule..." />

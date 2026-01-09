@@ -13,6 +13,7 @@ import Schedule from "./pages/Schedule";
 import LiveMatchDetail from "./pages/LiveMatchDetail";
 import ResultMatchDetail from "./pages/ResultMatchDetail";
 import ScheduleDetail from "./pages/ScheduleDetail";
+import Firehose from "./pages/Firehose";
 
 import NotFound from "./pages/NotFound";
 
@@ -51,6 +52,7 @@ const App = () => (
               <Route index element={<Home />} />
               <Route path="live" element={<LiveScores />} />
               <Route path="schedule" element={<Schedule />} />
+              <Route path="buzz" element={<Firehose />} />
 
               {/* Match detail pages */}
               <Route

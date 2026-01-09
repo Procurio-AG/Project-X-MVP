@@ -225,8 +225,11 @@ export function useEngagementFeed(params?: {
 export function useInfiniteEngagementFeed(params?: {
   source?: "twitter" | "youtube";
   limit?: number;
+  // Add options to control caching/refetching
+  staleTime?: number;
+  refetchInterval?: number;
 }) {
-  const { source, limit } = params ?? {};
+  const { source, limit, staleTime, refetchInterval } = params ?? {};
 
   return useInfiniteQuery({
     queryKey: ["engagement-feed-infinite", source ?? "all", limit ?? 20],
@@ -241,5 +244,9 @@ export function useInfiniteEngagementFeed(params?: {
       lastPage.pagination?.next_cursor ?? undefined,
 
     initialPageParam: undefined as string | undefined,
+    
+    // OVERRIDE GLOBAL SETTINGS
+    staleTime: staleTime, 
+    refetchInterval: refetchInterval,
   });
 }
