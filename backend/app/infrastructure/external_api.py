@@ -79,4 +79,28 @@ class SportMonksAPI:
             response.raise_for_status()
             return response.json()
 
+class NewsAPI:
+    def __init__(self):
+        self.host = "cricbuzz-cricket.p.rapidapi.com"
+        self.headers = {
+            "x-rapidapi-key": settings.RAPID_API_KEY,
+            "x-rapidapi-host": self.host
+        }
+
+    async def fetch_top_stories(self):
+        """
+        Fetches the latest news list (Index).
+        """
+        url = f"https://{self.host}/news/v1/index"
+        
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            try:
+                response = await client.get(url, headers=self.headers)
+                response.raise_for_status()
+                return response.json()
+            except Exception as e:
+                logger.error(f"News API fetch failed: {e}")
+                return {}
+
 sportmonks_api = SportMonksAPI()
+news_api = NewsAPI()
