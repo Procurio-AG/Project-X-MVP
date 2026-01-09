@@ -55,34 +55,32 @@
   }
 
   .dark {
-    --background: 220 28% 9%;
-    --foreground: 0 0% 98%;
-    
-    --card: 220 25% 12%;
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 220 25% 12%;
-    --popover-foreground: 0 0% 98%;
-    
-    --primary: 0 0% 98%;
-    --primary-foreground: 220 28% 9%;
-    
-    --secondary: 220 25% 16%;
-    --secondary-foreground: 0 0% 98%;
-    
-    --muted: 220 25% 14%;
-    --muted-foreground: 220 12% 60%;
-    
-    --accent: 145 50% 40%;
+    /* Premium neutral dark (no blue cast) */
+
+    --background: 0 0% 6%;
+    --foreground: 0 0% 96%;
+
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 96%;
+
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 68%;
+
+    --accent: 142 70% 45%;
     --accent-foreground: 0 0% 100%;
-    
-    --border: 220 25% 18%;
-    --input: 220 25% 18%;
-    --ring: 0 0% 98%;
-    
-    --nav-bg-transparent: 220 28% 9% / 0%;
-    --nav-bg-scrolled: 220 28% 9% / 95%;
-    --nav-border-scrolled: 220 25% 18%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 80%;
   }
 }
 
@@ -217,4 +215,8 @@
   .fade-up {
     @apply animate-fade-up;
   }
+}
+
+.noise {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNCIgaGVpZ2h0PSI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9InJnYmEoMCwwLDAsMC4wNSkiLz48L3N2Zz4=");
 }

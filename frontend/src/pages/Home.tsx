@@ -279,7 +279,7 @@ export default function Home() {
 
 
       {/* ========== 3. ENGAGEMENT FEED SECTION ========== */}
-      <section className="bg-muted py-16">
+      <section className="py-16 bg-background">
         <div className="container-content">
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className="h-6 w-6 text-accent" />
@@ -288,13 +288,13 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left 50% - Twitter Feed */}
+          <div className="grid grid-cols-1 lg:grid-cols-[4fr_3fr] gap-8">
+            {/* Left 50% - Pinterest-style Tweet Mosaic */}
             <div>
               <h3 className="font-semibold text-lg mb-4 text-foreground">
                 Latest from X (Twitter)
               </h3>
-              
+
               {engagementLoading ? (
                 <LoadingState message="Loading tweets..." />
               ) : engagementError ? (
@@ -305,23 +305,28 @@ export default function Home() {
                   message="Check back later for cricket buzz."
                 />
               ) : (
-                <div 
-                  className="space-y-4 overflow-y-auto pr-2" 
-                  style={{ maxHeight: "70vh" }}
-                >
-                  {twitterPosts.map((post) => (
-                    <TweetCard key={post.id} post={post} />
+                <div className="columns-1 sm:columns-2 gap-4">
+                  {twitterPosts.slice(0, 4).map((post) => (
+                    <div
+                      key={post.id}
+                      className="mb-4 break-inside-avoid rounded-2xl overflow-hidden
+                  transform transition-all duration-300
+                  hover:-translate-y-1 hover:shadow-xl"
+                    >
+                      <TweetCard post={post} />
+                    </div>
                   ))}
                 </div>
               )}
             </div>
+
 
             {/* Right 50% - YouTube Video */}
             <div>
               <h3 className="font-semibold text-lg mb-4 text-foreground">
                 Featured Video
               </h3>
-              
+
               {!featuredYouTubeVideo ? (
                 <EmptyState
                   title="No video available"
@@ -335,8 +340,9 @@ export default function Home() {
         </div>
       </section>
 
+
       {/* ========== 4. DISCUSSIONS TICKER ========== */}
-      <section className="py-16 bg-background">
+      {/* <section className="py-16 bg-background">
         <div className="container-content">
           <div className="flex items-center gap-2 mb-8">
             <MessageCircle className="h-6 w-6 text-accent" />
@@ -354,15 +360,60 @@ export default function Home() {
             <DiscussionsTicker discussions={discussionsList} />
           )}
         </div>
-      </section>
+      </section> */}
 
 
-      {/* ========== 5. WAITLIST SECTION (UNCHANGED) ========== */}
-      <section id="waitlist" className="bg-muted py-16">
-        <div className="container-content">
-          <WaitlistCard />
+{/* ========== 5. WAITLIST SECTION ========== */}
+      <section
+        id="waitlist"
+        className="relative py-24 overflow-hidden"
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src="https://resources.cricket-australia.pulselive.com/photo-resources/2023/05/04/b2526239-a7f3-402b-aaf9-41efbb3a912b/CjAWy75H.ashx?width=1900&height=1070"
+            alt="Cricket stadium crowd"
+            className="w-full h-full object-cover"
+          />
+
+          {/* Global dark overlay */}
+          <div className="absolute inset-0 bg-black/60" />
+
+          {/* Left (dark) → Right (visible) fade */}
+          <div
+            className="
+              absolute inset-0
+              bg-gradient-to-r
+              from-black/75
+              via-black/15
+              to-transparent
+            "
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 container-content">
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 items-center">
+            
+            {/* Left: Waitlist Form (lighter card) */}
+            <div
+              className="
+                bg-background/20
+                backdrop-blur-xl
+                border border-white/10
+                rounded-2xl
+                shadow-[0_30px_80px_rgba(0,0,0,0.6)]
+              "
+            >
+              <WaitlistCard />
+            </div>
+
+            {/* Right spacer (keeps composition balanced) */}
+            <div className="hidden lg:block" />
+          </div>
         </div>
       </section>
+
 
       {/* ========== 6. ABOUT US SECTION (UNCHANGED) ========== */}
       <section className="py-16">
