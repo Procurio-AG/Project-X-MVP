@@ -12,7 +12,6 @@ import FeaturedMatchCard from "@/components/FeaturedMatchCard";
 import NewsCard from "@/components/NewsCard";
 import TweetCard from "@/components/TweetCard";
 import YouTubeEmbedCard from "@/components/YouTubeEmbedCard";
-import DiscussionsTicker from "@/components/DiscussionsTicker";
 import WaitlistCard from "@/components/WaitlistCard";
 import AboutUsCard from "@/components/AboutUsCard";
 import TickerCard from "@/components/TickerCard";
@@ -342,27 +341,6 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* ========== 4. DISCUSSIONS TICKER ========== */}
-      {/* <section className="py-16 bg-background">
-        <div className="container-content">
-          <div className="flex items-center gap-2 mb-8">
-            <MessageCircle className="h-6 w-6 text-accent" />
-            <h2 className="font-display text-3xl font-bold text-foreground">
-              Fan Discussions
-            </h2>
-          </div>
-
-          {discussionsList.length === 0 ? (
-            <EmptyState
-              title="No discussions yet"
-              message="Be the first to start a conversation."
-            />
-          ) : (
-            <DiscussionsTicker discussions={discussionsList} />
-          )}
-        </div>
-      </section> */}
 
 
 {/* ========== 5. WAITLIST SECTION ========== */}

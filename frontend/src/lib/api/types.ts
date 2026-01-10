@@ -141,6 +141,7 @@ export interface ApiNewsItem {
   match_id?: string | null;
   image_id?: string | null;
   image_url?: string | null;
+  source_url?: string;
 }
 
 export type ApiNewsResponse = ApiNewsItem[];

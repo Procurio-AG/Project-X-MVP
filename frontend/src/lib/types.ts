@@ -148,6 +148,7 @@ export interface NewsArticle {
   match_id?: string | null;
   image_id?: string | null;
   image_url?: string | null;
+  source_url?: string;
 }
 
 /* ---------- Mock Data Types (Keep for Phase 1) ---------- */

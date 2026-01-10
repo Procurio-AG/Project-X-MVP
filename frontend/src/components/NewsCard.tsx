@@ -10,7 +10,7 @@ interface NewsCardProps {
 
 export default function NewsCard({ news }: NewsCardProps) {
   // TEMP: backend does not expose canonical article URLs yet
-  const newsUrl = "#";
+  const newsUrl = news.source_url ?? undefined;
 
   return (
     <a
