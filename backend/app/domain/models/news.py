@@ -10,6 +10,7 @@ class NewsArticleBase(BaseModel):
     story_type: Optional[str] = None
     published_at: datetime
     match_id: Optional[str] = None
+    source_url: Optional[str] = None
 
 class NewsArticleResponse(NewsArticleBase):
     image_id: Optional[str] = None

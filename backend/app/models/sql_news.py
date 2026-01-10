@@ -17,8 +17,7 @@ class NewsArticle(Base):
     context = Column(String, nullable=True) # e.g. "WPL 2026"
     story_type = Column(String, nullable=True) # "Reports", "News", etc.
     
-    # Optional Link to specific Match (Unified ID)
-    # We make this nullable because generic news won't have a match_id
+    source_url = Column(String, nullable=True)
     match_id = Column(String, ForeignKey("matches.match_id"), nullable=True, index=True)
     
     published_at = Column(DateTime, nullable=False)
