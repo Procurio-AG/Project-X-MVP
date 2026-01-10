@@ -24,5 +24,5 @@ class Match(Base):
     away_score = Column(String, nullable=True)
     # Stores "India won by 7 runs"
     result_note = Column(String, nullable=True)
-
+    highlights_url = Column(String, nullable=True)
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())

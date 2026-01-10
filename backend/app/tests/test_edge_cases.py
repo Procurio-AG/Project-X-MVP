@@ -5,9 +5,7 @@ from app.services.diff_service import detect_changes
 from app.domain.models.live import LiveMatch, InningScore
 from app.domain.models.event import EventType
 
-# ==========================================
-# 1. Engagement Filter Tests (Spam/Context)
-# ==========================================
+# Engagement Filter Tests (Spam/Context)
 
 def test_engagement_filter_homonym_trap():
     """Test that 'BBL' (Brazilian Butt Lift) spam is blocked."""
@@ -40,11 +38,7 @@ def test_engagement_filter_case_insensitivity():
     valid_text = "MAJORLEAGUECRICKET IS THE BEST"
     assert is_valid_content(valid_text) is True
 
-
-# ==========================================
-# 2. Live Match Diff Tests (Crash Prevention)
-# ==========================================
-
+# Live Match Diff Tests (Crash Prevention)
 def create_mock_match(innings_data):
     """Helper to create a LiveMatch object with specific innings."""
     return LiveMatch(
