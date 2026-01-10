@@ -4,6 +4,7 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "./Navbar";
 import WaitlistModal from "./WaitlistModal";
+import MobileBottomNav from "./MobileBottomNav";
 
 export default function Layout() {
   const [waitlistOpen, setWaitlistOpen] = useState(false);
@@ -20,12 +21,17 @@ export default function Layout() {
       />
 
       {/* Main Content */}
-      <main className={isHome ? "" : "pt-16"}>
+      <main
+        className={`
+          ${isHome ? "" : "pt-16"}
+          pb-16 md:pb-0
+        `}
+      >
         <Outlet />
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-card mt-16">
+      
+      {/* Footer — DESKTOP ONLY */}
+      <footer className="hidden md:block border-t border-border bg-card mt-16">
         <div className="container-content py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
@@ -51,18 +57,12 @@ export default function Layout() {
               </h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link
-                    to="/live"
-                    className="hover:text-foreground transition-colors"
-                  >
+                  <Link to="/live" className="hover:text-foreground">
                     Live Scores
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/schedule"
-                    className="hover:text-foreground transition-colors"
-                  >
+                  <Link to="/schedule" className="hover:text-foreground">
                     Match Schedule
                   </Link>
                 </li>
@@ -78,7 +78,7 @@ export default function Layout() {
               </p>
               <button
                 onClick={() => setWaitlistOpen(true)}
-                className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium"
               >
                 Join Waitlist
               </button>
@@ -90,6 +90,9 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
 
       {/* Waitlist Modal */}
       <WaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />

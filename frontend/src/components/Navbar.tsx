@@ -71,9 +71,10 @@ export default function Navbar({
           {/* Desktop Navigation — UNCHANGED */}
           <div className="hidden md:flex items-center gap-8">
             <NavLink to="/live">Live Scores</NavLink>
-            <NavLink to="/schedule">Schedule</NavLink>
             <NavLink to="/buzz"> Feed</NavLink>
             <NavLink to="/news"> News</NavLink>
+            <NavLink to="/chatroom">Chatroom</NavLink>
+            <NavLink to="/schedule">Schedule</NavLink>
 
             <button
               onClick={handleWaitlistClick}
@@ -88,17 +89,26 @@ export default function Navbar({
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Join Waitlist Button */}
+          <div className="md:hidden">
+            <button
+              onClick={handleWaitlistClick}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                isScrolled
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-white/10 text-white backdrop-blur-sm border border-white/20"
+              )}
+            >
+              Join
+            </button>
+          </div>
+
+          {/* Mobile Menu Button — DISABLED */}
           <button
-            className={cn(
-              "md:hidden transition-colors",
-              isScrolled ? "text-foreground" : "text-white"
-            )}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+            className="hidden"
+            aria-hidden
+          />
         </div>
 
         {/* ---------------- MOBILE DROPDOWN (ONLY PART CHANGED) ---------------- */}
