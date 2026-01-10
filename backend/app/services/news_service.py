@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
@@ -7,6 +8,16 @@ from app.infrastructure.external_api import news_api
 from app.models.sql_news import NewsArticle
 
 logger = logging.getLogger(__name__)
+
+def generate_cricbuzz_url(story_id: int, headline: str) -> str:
+    """
+    Generates the valid Cricbuzz URL using the verified logic.
+    """
+    if not headline:
+        return f"https://www.cricbuzz.com/cricket-news/{story_id}/news"
+    
+    
+    return f"https://www.cricbuzz.com/cricket-news/{story_id}"
 
 async def fetch_and_store_news(db: Session):
     logger.info("Starting News Fetch...")

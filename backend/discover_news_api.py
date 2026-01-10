@@ -10,7 +10,7 @@ TEST_IMAGE_ID = "820370" # From your previous result
 
 async def extended_discovery():
     print("="*60)
-    print("📰 NEWS API: DEEP DIVE")
+    print("NEWS API: DEEP DIVE")
     print("="*60)
 
     headers = {
@@ -20,7 +20,7 @@ async def extended_discovery():
 
     async with httpx.AsyncClient() as client:
         # 1. Check Story Detail
-        print(f"\n📡 1. Fetching Detail for ID {TEST_STORY_ID}...")
+        print(f"\n1. Fetching Detail for ID {TEST_STORY_ID}...")
         try:
             url = f"https://{HOST}/news/v1/detail/{TEST_STORY_ID}"
             resp = await client.get(url, headers=headers)
@@ -30,31 +30,31 @@ async def extended_discovery():
                 json.dump(data, f, indent=2)
             
             # Print structure
-            print("   ✅ keys found:", data.keys())
+            print("   keys found:", data.keys())
             if "content" in data:
-                print(f"   📝 Content Preview: {str(data['content'])[:100]}...")
+                print(f"   Content Preview: {str(data['content'])[:100]}...")
         except Exception as e:
-            print(f"   ❌ Detail Fetch Failed: {e}")
+            print(f"   Detail Fetch Failed: {e}")
 
         # 2. Check Topics (for filtering)
-        print(f"\n📡 2. Fetching Topics...")
+        print(f"\n2. Fetching Topics...")
         try:
             url = f"https://{HOST}/news/v1/get-topics"
             resp = await client.get(url, headers=headers)
             data = resp.json()
             # Print first few topics
             topics = data.get("topics", [])
-            print(f"   ✅ Found {len(topics)} topics.")
+            print(f"   Found {len(topics)} topics.")
             for t in topics[:3]:
                 print(f"      - {t.get('headline')} (ID: {t.get('id')})")
         except Exception as e:
-            print(f"   ❌ Topics Fetch Failed: {e}")
+            print(f"   Topics Fetch Failed: {e}")
 
     # 3. Image URL Verification (No API call needed, just logic)
-    print(f"\n🖼️  3. Image URL Hypothesis")
+    print(f"\n3. Image URL Hypothesis")
     # Standard Cricbuzz pattern
     generated_url = f"https://static.cricbuzz.com/a/img/v1/600x400/i1/c{TEST_IMAGE_ID}/i.jpg"
-    print(f"   👉 Please open this URL in your browser to verify:")
+    print(f"   Please open this URL in your browser to verify:")
     print(f"      {generated_url}")
 
 if __name__ == "__main__":

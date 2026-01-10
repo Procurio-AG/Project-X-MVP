@@ -52,7 +52,7 @@ async def startup_event():
     async def start_twitter_polling():
         while True:
             try:
-                logger.info("⏳ Scheduled Task: Fetching Tweets...")
+                logger.info("Scheduled Task: Fetching Tweets...")
                 with SessionLocal() as db:
                     await fetch_and_store_engagement(db, "twitter")
             except Exception as e:
@@ -63,7 +63,7 @@ async def startup_event():
     async def start_youtube_polling():
         while True:
             try:
-                logger.info("⏳ Scheduled Task: Fetching Videos...")
+                logger.info("Scheduled Task: Fetching Videos...")
                 with SessionLocal() as db:
                     await fetch_and_store_engagement(db, "youtube")
             except Exception as e:
@@ -86,7 +86,7 @@ async def startup_event():
     async def start_news_polling():
         while True:
             try:
-                logger.info("📰 Scheduled Task: Fetching News...")
+                logger.info("Scheduled Task: Fetching News...")
                 with SessionLocal() as db:
                     await fetch_and_store_news(db)
             except Exception as e:
