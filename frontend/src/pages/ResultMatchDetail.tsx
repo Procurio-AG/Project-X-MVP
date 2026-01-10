@@ -114,6 +114,118 @@ function StatRow({ player, type }: { player: any; type: 'bat' | 'bowl' }) {
   );
 }
 
+function SummaryInnings({ inning }: { inning: any }) {
+  return (
+    <div className="bg-white border-2 border-slate-200 rounded-[2rem] shadow-xl p-6 md:p-10">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <h3
+          className="
+            text-xs md:text-sm
+            font-black
+            uppercase
+            tracking-[0.25em]
+            text-white
+            px-8 md:px-10
+            py-3
+            rounded-full
+            bg-gradient-to-r
+            from-[#0B1220]
+            via-[#0F1A2E]
+            to-[#0B1220]
+            shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+            text-center
+            self-start md:self-auto
+          "
+        >
+          {inning.team_name} Innings
+        </h3>
+
+        <span className="text-xs font-black uppercase tracking-widest text-slate-500 text-left md:text-right">
+          {inning.score} ({inning.overs})
+        </span>
+      </div>
+
+      {/* MAIN SPLIT */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+
+        {/* ================= BATTING ================= */}
+        <div className="md:col-span-7 space-y-4">
+          {inning.batting?.map((b: any, i: number) => (
+            <div
+              key={i}
+              className="flex justify-between gap-4 pb-3 border-b border-slate-100 last:border-none"
+            >
+              <div className="min-w-0">
+                <p className="text-sm md:text-base font-semibold text-slate-900 truncate">
+                  {b.player?.name}
+                </p>
+                <p className="text-[11px] md:text-[12px] text-slate-600 truncate">
+                  {b.status === 'out'
+                    ? b.dismissal_text || 'out'
+                    : 'not out'}
+                </p>
+              </div>
+
+              <div className="text-sm md:text-base font-bold text-slate-900 whitespace-nowrap">
+                {b.runs}({b.balls})
+              </div>
+            </div>
+          ))}
+
+          {/* Extras & Total */}
+          <div className="pt-4 mt-4 border-t border-slate-200 text-sm font-semibold flex justify-between">
+            <span>Extras</span>
+            <span>{inning.extras || 0}</span>
+          </div>
+
+          <div className="mt-1 text-sm font-black flex justify-between">
+            <span>Total</span>
+            <span>
+              {inning.score} ({inning.overs})
+            </span>
+          </div>
+        </div>
+
+        {/* ================= DIVIDER (desktop only) ================= */}
+        <div className="hidden md:block md:col-span-1">
+          <div className="h-full w-px bg-slate-200 mx-auto" />
+        </div>
+
+        {/* ================= BOWLING ================= */}
+        <div className="md:col-span-4">
+          <div className="grid grid-cols-12 text-[11px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-200 pb-2 mb-3">
+            <div className="col-span-6">Bowler</div>
+            <div className="col-span-2 text-right">O</div>
+            <div className="col-span-2 text-right">R</div>
+            <div className="col-span-2 text-right">W</div>
+          </div>
+
+          <div className="space-y-2">
+            {inning.bowling?.map((bw: any, i: number) => (
+              <div key={i} className="grid grid-cols-12 text-sm">
+                <div className="col-span-6 font-semibold text-slate-900 truncate">
+                  {bw.player?.name}
+                </div>
+                <div className="col-span-2 text-right">{bw.overs}</div>
+                <div className="col-span-2 text-right">{bw.runs_conceded}</div>
+                <div className="col-span-2 text-right font-semibold">
+                  {bw.wickets}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
+
+
 /* ================== MAIN PAGE ================== */
 
 export default function ResultMatchDetail() {
@@ -213,6 +325,17 @@ export default function ResultMatchDetail() {
           </div>
 
         </div>
+
+        {/* FULL-WIDTH INNINGS SUMMARY */}
+        <div className="mt-24 space-y-12">
+          <h2 className="text-center text-lg md:text-xl font-extrabold uppercase tracking-[0.25em] text-slate-900">
+            Innings Summary
+          </h2>
+
+          <SummaryInnings inning={inn1} />
+          <SummaryInnings inning={inn2} />
+        </div>
+
       </div>
       {/* Footer will naturally follow here because the main wrapper is not fixed/absolute */}
     </div>
