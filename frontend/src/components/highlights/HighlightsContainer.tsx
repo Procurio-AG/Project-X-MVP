@@ -26,7 +26,7 @@ export default function HighlightsContainer({
         <button
           onClick={() => setMobileVisible(true)}
           className="
-            fixed bottom-6 right-6 z-50
+            fixed bottom-24 right-6 z-50
             md:hidden
             flex items-center gap-2
             bg-slate-900 text-white

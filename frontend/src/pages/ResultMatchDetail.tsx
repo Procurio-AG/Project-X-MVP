@@ -340,7 +340,7 @@ export default function ResultMatchDetail() {
 
       </div>
       {/* Footer will naturally follow here because the main wrapper is not fixed/absolute */}
-       <HighlightsContainer highlightsUrl={match.highlights_url} />
+      <HighlightsContainer highlightsUrl={match.highlights_url} />
     </div>
   );
 }
