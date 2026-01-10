@@ -1,11 +1,13 @@
 // API endpoint functions - centralized data fetching layer
 import { apiClient } from './client';
+import type { NewsArticle } from "@/lib/types";
 import type {
   ApiSchedulesResponse,
   ApiMatchesResponse,
   ApiLiveMatchResponse,
   ApiEventsResponse,
   ApiPlayerStatsResponse,
+  ApiNewsResponse
 } from './types';
 
 // Schedules
@@ -33,11 +35,15 @@ export async function fetchPlayerStats(playerId: string): Promise<ApiPlayerStats
   return apiClient<ApiPlayerStatsResponse>(`/players/${playerId}/stats`);
 }
 
+export async function fetchNews(limit = 20): Promise<ApiNewsResponse> {
+  return apiClient<ApiNewsResponse>(`/api/v1/news?limit=${limit}`);
+}
+
 export const endpoints = {
   schedules: "/api/v1/schedules",
   liveMatches: "/api/v1/matches/live",
 
-  // NEW — unified ticker endpoint
   liveScores: "/api/v1/matches/livescore",
   engagementFeed: "/api/v1/engagement/feed",
+  news: "/api/v1/news",
 };

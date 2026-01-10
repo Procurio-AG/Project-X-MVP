@@ -1,146 +1,88 @@
-import { Target, Users, Zap, Shield } from "lucide-react";
+// frontend/src/components/AboutUsCard.tsx
 
-function AboutUsCard() {
+import { ArrowRight, Zap, Users, Shield } from "lucide-react";
+
+export default function AboutUsCard() {
   return (
-    <div className="max-w-6xl mx-auto">
-      {/* Main Header */}
-      <div className="text-center mb-12">
-        <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-4">
-          About STRYKER
-        </h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          We believe in <span className="text-primary font-semibold">clarity over noise</span>. 
-          In a world drowning in cricket content, we deliver what matters — live scores, 
-          intelligent analysis, and meaningful discussions.
-        </p>
-      </div>
+    <div className="relative w-full max-w-7xl mx-auto overflow-hidden">
+      {/* Reduced grid gap from 12 to 8 */}
+      <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-8 items-center">
+        
+        {/* Left Side: Massive Vertical Typography */}
+        <div className="hidden lg:block select-none">
+          <h2 className="text-[100px] font-black leading-none tracking-tighter text-foreground/10 uppercase [writing-mode:vertical-lr] rotate-180">
+            Our Mission
+          </h2>
+        </div>
 
-      {/* Mission Statement */}
-      <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-border rounded-lg p-8 md:p-10 mb-12">
-        <div className="flex items-start gap-4 mb-4">
-          <div className="p-3 bg-primary/10 rounded-lg">
-            <Target className="h-6 w-6 text-primary" />
+        {/* Right Side: Editorial Content */}
+        {/* Reduced vertical spacing from space-y-16 to space-y-10 */}
+        <div className="space-y-10">
+          <div className="max-w-3xl">
+            {/* Reduced margin-bottom from mb-8 to mb-4 */}
+            <h3 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight leading-tight">
+              Cricket has no shortage of content. <br />
+              <span className="text-accent">It lacks clarity.</span>
+            </h3>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-light">
+              STRYKER is built to focus on what actually matters—the game, the numbers, 
+              and the conversations around it. No clickbait, just high-fidelity insights.
+            </p>
           </div>
-          <div>
-            <h3 className="font-display text-2xl font-bold text-foreground mb-2">Our Mission</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              To create the ultimate cricket command center for serious fans who demand precision, 
-              speed, and substance. No clutter, no distractions — just the cricket intelligence you need.
+
+          {/* Pillars Grid */}
+          {/* Reduced gap from 12 to 8 and pt from 12 to 8 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-border/50 pt-8">
+            <div className="group">
+              <div className="mb-3 p-2.5 w-fit rounded-xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                <Zap className="h-5 w-5 text-primary" />
+              </div>
+              <h4 className="text-base font-bold mb-1 uppercase tracking-wider">Fast Updates</h4>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Live scores delivered via proprietary low-latency engines.
+              </p>
+            </div>
+
+            <div className="group">
+              <div className="mb-3 p-2.5 w-fit rounded-xl bg-accent/5 group-hover:bg-accent/10 transition-colors">
+                <Users className="h-5 w-5 text-accent" />
+              </div>
+              <h4 className="text-base font-bold mb-1 uppercase tracking-wider">Community</h4>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                A space for tactical discourse, free from traditional social media noise.
+              </p>
+            </div>
+
+            <div className="group">
+              <div className="mb-3 p-2.5 w-fit rounded-xl bg-live/5 group-hover:bg-live/10 transition-colors">
+                <Shield className="h-5 w-5 text-live" />
+              </div>
+              <h4 className="text-base font-bold mb-1 uppercase tracking-wider">Verified Data</h4>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Clean presentation of data you can trust from verified analytics.
+              </p>
+            </div>
+          </div>
+
+          {/* Learn More / CTA */}
+          {/* Reduced pt from 8 to 4 */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-4">
+            <a
+              href="#waitlist"
+              className="group flex items-center gap-2 px-7 py-3.5 bg-foreground text-background rounded-full font-bold hover:bg-accent hover:text-white transition-all duration-300 text-sm"
+            >
+              Join the Command Center
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+            <p className="text-xs text-muted-foreground max-w-[240px]">
+              If you follow the game seriously, you’re already home.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Core Values Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mb-4">
-            <Zap className="h-6 w-6 text-primary" />
-          </div>
-          <h3 className="font-display text-xl font-bold text-foreground mb-3">Real-Time Updates</h3>
-          <p className="text-muted-foreground">
-            Lightning-fast live scores and ball-by-ball commentary. Stay ahead of every delivery, 
-            every wicket, every moment that matters.
-          </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-accent/10 rounded-lg mb-4">
-            <Users className="h-6 w-6 text-accent" />
-          </div>
-          <h3 className="font-display text-xl font-bold text-foreground mb-3">Expert Community</h3>
-          <p className="text-muted-foreground">
-            Join discussions with passionate fans and cricket analysts. Share insights, 
-            debate strategies, and connect with people who truly understand the game.
-          </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-live/10 rounded-lg mb-4">
-            <Shield className="h-6 w-6 text-live" />
-          </div>
-          <h3 className="font-display text-xl font-bold text-foreground mb-3">Trusted Data</h3>
-          <p className="text-muted-foreground">
-            Accurate, verified information from reliable sources. We prioritize quality and 
-            precision in every stat, every score, every piece of analysis.
-          </p>
-        </div>
-      </div>
-
-      {/* What Makes Us Different */}
-      <div className="bg-card border border-border rounded-lg p-8 md:p-10">
-        <h3 className="font-display text-2xl font-bold text-foreground mb-6 text-center">
-          What Makes Us Different
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
-              1
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-2">No Fluff, Just Cricket</h4>
-              <p className="text-sm text-muted-foreground">
-                We cut through the noise. Every feature, every piece of content serves a purpose — 
-                keeping you informed and engaged with the game you love.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
-              2
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-2">Built for Fans, By Fans</h4>
-              <p className="text-sm text-muted-foreground">
-                Created by cricket enthusiasts who understand what serious fans need. 
-                We're not just building a platform — we're building a home for cricket lovers.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
-              3
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-2">Intelligent Design</h4>
-              <p className="text-sm text-muted-foreground">
-                Clean, intuitive interface that gets out of your way. Access everything you need 
-                with minimal clicks — because your time is valuable.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
-              4
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-2">Always Evolving</h4>
-              <p className="text-sm text-muted-foreground">
-                Continuous improvements based on user feedback. We listen, we adapt, 
-                and we deliver features that matter to our community.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Call to Action */}
-      <div className="mt-12 text-center">
-        <p className="text-lg text-muted-foreground mb-4">
-          Ready to experience cricket coverage done right?
-        </p>
-        <a
-          href="#waitlist"
-          className="inline-block px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-        >
-          Join Our Community
-        </a>
-      </div>
+      {/* Background Decorative Element */}
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-accent/5 rounded-full blur-3xl -z-10" />
     </div>
   );
 }
-
-export default AboutUsCard;

@@ -1,74 +1,78 @@
 import { formatRelativeTime } from "@/lib/utils";
-import type { NewsItem } from "@/lib/types";
-import { ExternalLink, Clock } from "lucide-react";
+import type { NewsArticle } from "@/lib/types";
+import { ExternalLink, Clock, ImageOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NewsCardProps {
-  news: NewsItem;
-  variant?: "compact" | "full";
+  news: NewsArticle;
+  variant?: "compact" | "default";
 }
 
-export default function NewsCard({ news, variant = "full" }: NewsCardProps) {
+export default function NewsCard({ news }: NewsCardProps) {
+  // TEMP: backend does not expose canonical article URLs yet
+  const newsUrl = "#";
+
   return (
     <a
-      href={news.url}
+      href={newsUrl}
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "block bg-card rounded-lg border border-border card-hover overflow-hidden group",
-        variant === "compact" ? "p-4" : "p-5"
+        "block bg-card rounded-lg border border-border overflow-hidden",
+        "hover:border-accent/50 hover:shadow-lg transition-all duration-200",
+        "group"
       )}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          {/* Category Badge */}
-          <div className="flex items-center gap-2 mb-2">
-            <span className={cn(
-              "inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize",
-              news.category === "news" && "bg-primary/10 text-primary",
-              news.category === "analysis" && "bg-accent/10 text-accent",
-              news.category === "opinion" && "bg-highlight/20 text-highlight-foreground"
-            )}>
-              {news.category}
-            </span>
-            <span className="text-xs text-muted-foreground">{news.source}</span>
-          </div>
-
-          {/* Title */}
-          <h3 className={cn(
-            "font-display font-semibold text-foreground group-hover:text-accent transition-colors line-clamp-2",
-            variant === "compact" ? "text-base" : "text-lg"
-          )}>
-            {news.title}
-          </h3>
-
-          {/* Summary (full variant only) */}
-          {variant === "full" && (
-            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-              {news.summary}
-            </p>
-          )}
-
-          {/* Meta */}
-          <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {formatRelativeTime(news.publishedAt)}
-            </span>
-            <ExternalLink className="h-3 w-3" />
-          </div>
-        </div>
-
-        {/* Thumbnail (if available) */}
-        {news.imageUrl && variant === "full" && (
-          <div className="flex-shrink-0 w-24 h-24 rounded-lg bg-muted overflow-hidden">
-            <img
-              src={news.imageUrl}
-              alt=""
-              className="w-full h-full object-cover"
-            />
+      {/* IMAGE */}
+      <div className="relative w-full h-48 bg-muted overflow-hidden">
+        {news.image_url ? (
+          <img
+            src={news.image_url}
+            alt={news.headline}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+              e.currentTarget.parentElement?.classList.add(
+                "flex",
+                "items-center",
+                "justify-center"
+              );
+            }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <ImageOff className="h-12 w-12 text-muted-foreground/40" />
           </div>
         )}
+
+        {/* STORY TYPE BADGE */}
+        {news.story_type && (
+          <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold capitalize bg-black/60 text-white backdrop-blur-sm">
+            {news.story_type}
+          </span>
+        )}
+      </div>
+
+      {/* CONTENT */}
+      <div className="p-4">
+        <h3 className="font-display font-bold text-lg text-foreground mb-2 line-clamp-2 group-hover:text-accent transition-colors">
+          {news.headline}
+        </h3>
+
+        {news.intro && (
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+            {news.intro}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {formatRelativeTime(news.published_at)}
+          </span>
+
+          <ExternalLink className="h-3 w-3 transition-colors group-hover:text-accent" />
+        </div>
       </div>
     </a>
   );

@@ -35,7 +35,12 @@ export default function Home() {
     refetch: refetchScores 
   } = useLiveScores({ refetchInterval: 30000 });
   
-  const { data: news, isLoading: newsLoading, error: newsError } = useNews();
+  const {
+    data: news,
+    isLoading: newsLoading,
+    error: newsError,
+    refetch: refetchNews,
+  } = useNews();  
   const { data: discussions } = useDiscussions();
   
   // Engagement feed - Twitter posts only
@@ -45,7 +50,7 @@ export default function Home() {
     error: engagementError,
   } = useInfiniteEngagementFeed({
     source: "twitter",
-    limit: 20,
+    limit: 3,
   });
 
   const twitterPosts = useMemo(
@@ -63,11 +68,11 @@ export default function Home() {
     data: youtubePages,
   } = useInfiniteEngagementFeed({
     source: "youtube",
-    limit: 5,
+    limit: 2,
   });
 
   const featuredYouTubeVideo = useMemo(
-    () => youtubePages?.pages[0]?.data[0],
+    () => youtubePages?.pages[0]?.data[1],
     [youtubePages]
   );
 
@@ -254,8 +259,8 @@ export default function Home() {
               {newsLoading ? (
                 <LoadingState message="Loading news..." />
               ) : newsError ? (
-                <ErrorState onRetry={() => {}} />
-              ) : !news || news.length === 0 ? (
+                <ErrorState onRetry={refetchNews} />
+              ) : !Array.isArray(news) || news.length === 0 ? (
                 <EmptyState
                   title="No news available"
                   message="Check back later for updates."
@@ -266,7 +271,6 @@ export default function Home() {
                     <NewsCard
                       key={item.id}
                       news={item}
-                      variant="compact"
                     />
                   ))}
                 </div>
@@ -278,65 +282,65 @@ export default function Home() {
 
 
 
-      {/* ========== 3. ENGAGEMENT FEED SECTION ========== */}
-      <section className="bg-muted py-16">
+      {/* ========== 3. ENGAGEMENT FEED SECTION (STATIC 3-CARD GRID) ========== */}
+      <section className="py-16 bg-muted/30">
         <div className="container-content">
-          <div className="flex items-center gap-2 mb-8">
-            <Sparkles className="h-6 w-6 text-accent" />
-            <h2 className="font-display text-3xl font-bold text-foreground">
+          {/* Section Header */}
+          <div className="flex items-center gap-2 mb-8 tracking-tighter">
+            <Sparkles className="h-5 w-5 text-accent" />
+            <h2 className="font-display text-2xl font-black text-foreground">
               Cricket Buzz
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left 50% - Twitter Feed */}
-            <div>
-              <h3 className="font-semibold text-lg mb-4 text-foreground">
-                Latest from X (Twitter)
-              </h3>
-              
-              {engagementLoading ? (
-                <LoadingState message="Loading tweets..." />
-              ) : engagementError ? (
-                <ErrorState message="Unable to load tweets" />
-              ) : twitterPosts.length === 0 ? (
-                <EmptyState
-                  title="No tweets available"
-                  message="Check back later for cricket buzz."
-                />
-              ) : (
-                <div 
-                  className="space-y-4 overflow-y-auto pr-2" 
-                  style={{ maxHeight: "70vh" }}
-                >
-                  {twitterPosts.map((post) => (
-                    <TweetCard key={post.id} post={post} />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Right 50% - YouTube Video */}
-            <div>
-              <h3 className="font-semibold text-lg mb-4 text-foreground">
+          <div className="flex flex-col gap-10">
+            {/* Top Section: Hero Video */}
+            <div className="relative">
+              <h3 className="text-xs font-bold text-muted-foreground mb-3 uppercase tracking-[0.2em]">
                 Featured Video
               </h3>
-              
-              {!featuredYouTubeVideo ? (
-                <EmptyState
-                  title="No video available"
-                  message="Check back later for highlights."
-                />
+              <div className="rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl border border-border bg-black aspect-video lg:aspect-[21/9] w-full relative">
+                {!featuredYouTubeVideo ? (
+                  <EmptyState title="No video available" message="Check back later." />
+                ) : (
+                  <YouTubeEmbedCard post={featuredYouTubeVideo} minimal={true} />
+                )}
+              </div>
+            </div>
+
+            {/* Bottom Section: Static 3-Card Grid */}
+            <div>
+              <h3 className="text-xs font-bold text-muted-foreground mb-6 uppercase tracking-[0.2em]">
+                Latest from X (formerly Twitter)
+              </h3>
+
+              {engagementLoading ? (
+                <LoadingState message="Loading tweets..." />
+              ) : twitterPosts.length === 0 ? (
+                <EmptyState title="No tweets available" />
               ) : (
-                <YouTubeEmbedCard post={featuredYouTubeVideo} />
+                /* Switched from overflow-x-auto to a standard grid */
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {twitterPosts.slice(0, 3).map((post) => (
+                    <div
+                      key={post.id}
+                      className="flex h-full"
+                    >
+                      <div className="w-full bg-card rounded-2xl border border-border flex flex-col shadow-sm hover:border-accent/40 transition-all">
+                        <TweetCard post={post} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
         </div>
       </section>
 
+
       {/* ========== 4. DISCUSSIONS TICKER ========== */}
-      <section className="py-16 bg-background">
+      {/* <section className="py-16 bg-background">
         <div className="container-content">
           <div className="flex items-center gap-2 mb-8">
             <MessageCircle className="h-6 w-6 text-accent" />
@@ -354,15 +358,60 @@ export default function Home() {
             <DiscussionsTicker discussions={discussionsList} />
           )}
         </div>
-      </section>
+      </section> */}
 
 
-      {/* ========== 5. WAITLIST SECTION (UNCHANGED) ========== */}
-      <section id="waitlist" className="bg-muted py-16">
-        <div className="container-content">
-          <WaitlistCard />
+{/* ========== 5. WAITLIST SECTION ========== */}
+      <section
+        id="waitlist"
+        className="relative py-24 overflow-hidden"
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src="https://resources.cricket-australia.pulselive.com/photo-resources/2023/05/04/b2526239-a7f3-402b-aaf9-41efbb3a912b/CjAWy75H.ashx?width=1900&height=1070"
+            alt="Cricket stadium crowd"
+            className="w-full h-full object-cover"
+          />
+
+          {/* Global dark overlay */}
+          <div className="absolute inset-0 bg-black/60" />
+
+          {/* Left (dark) → Right (visible) fade */}
+          <div
+            className="
+              absolute inset-0
+              bg-gradient-to-r
+              from-black/75
+              via-black/15
+              to-transparent
+            "
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 container-content">
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 items-center">
+            
+            {/* Left: Waitlist Form (lighter card) */}
+            <div
+              className="
+                bg-background/20
+                backdrop-blur-xl
+                border border-white/10
+                rounded-2xl
+                shadow-[0_30px_80px_rgba(0,0,0,0.6)]
+              "
+            >
+              <WaitlistCard />
+            </div>
+
+            {/* Right spacer (keeps composition balanced) */}
+            <div className="hidden lg:block" />
+          </div>
         </div>
       </section>
+
 
       {/* ========== 6. ABOUT US SECTION (UNCHANGED) ========== */}
       <section className="py-16">

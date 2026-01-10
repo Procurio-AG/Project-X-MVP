@@ -2,10 +2,9 @@
 
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
-import type { ScheduleMatch, LiveMatch } from "@/lib/types";
-import { endpoints } from "@/lib/api/endpoints";
+import type { ScheduleMatch, LiveMatch, NewsArticle } from "@/lib/types";
+import { endpoints, fetchNews } from "@/lib/api/endpoints";
 import {
-  fetchMockNews,
   fetchMockDiscussions,
   fetchMockCommentary,
   fetchMockScorecard,
@@ -79,12 +78,6 @@ export function useMatch(matchId: number | undefined, options?: { refetchInterva
   });
 }
 
-export function useNews() {
-  return useQuery({
-    queryKey: ["news"],
-    queryFn: fetchMockNews,
-  });
-}
 
 export function useDiscussions(matchId?: number) {
   return useQuery({
@@ -101,13 +94,13 @@ export function useCommentary(matchId: number | undefined) {
   });
 }
 
-export function useScorecard(matchId: number | undefined) {
-  return useQuery({
-    queryKey: ["scorecard", matchId],
-    queryFn: () => fetchMockScorecard(matchId!),
-    enabled: typeof matchId === "number",
-  });
-}
+// export function useScorecard(matchId: number | undefined) {
+//   return useQuery({
+//     queryKey: ["scorecard", matchId],
+//     queryFn: () => fetchMockScorecard(matchId!),
+//     enabled: typeof matchId === "number",
+//   });
+// }
 
 /**
  * RICH DETAIL HOOK - Use this for LiveMatchDetail.tsx
@@ -225,8 +218,11 @@ export function useEngagementFeed(params?: {
 export function useInfiniteEngagementFeed(params?: {
   source?: "twitter" | "youtube";
   limit?: number;
+  // Add options to control caching/refetching
+  staleTime?: number;
+  refetchInterval?: number;
 }) {
-  const { source, limit } = params ?? {};
+  const { source, limit, staleTime, refetchInterval } = params ?? {};
 
   return useInfiniteQuery({
     queryKey: ["engagement-feed-infinite", source ?? "all", limit ?? 20],
@@ -241,5 +237,27 @@ export function useInfiniteEngagementFeed(params?: {
       lastPage.pagination?.next_cursor ?? undefined,
 
     initialPageParam: undefined as string | undefined,
+    
+    // OVERRIDE GLOBAL SETTINGS
+    staleTime: staleTime, 
+    refetchInterval: refetchInterval,
+  });
+}
+
+export function useNews(options?: {
+  limit?: number;
+  refetchInterval?: number;
+}) {
+  const { limit = 20, refetchInterval } = options ?? {};
+
+  return useQuery<NewsArticle[]>({
+    queryKey: ["news", limit],
+    queryFn: async () => {
+      const data = await fetchNews(limit);
+      console.log("[useNews] fetched news:", data);
+      return data;
+    },
+    staleTime: 5 * 60 * 1000, // 5 min (news ≠ live scores)
+    refetchInterval,          // optional auto-refresh
   });
 }

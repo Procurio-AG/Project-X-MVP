@@ -72,6 +72,8 @@ export default function Navbar({
           <div className="hidden md:flex items-center gap-8">
             <NavLink to="/live">Live Scores</NavLink>
             <NavLink to="/schedule">Schedule</NavLink>
+            <NavLink to="/buzz"> Feed</NavLink>
+            <NavLink to="/news"> News</NavLink>
 
             <button
               onClick={handleWaitlistClick}
@@ -136,6 +138,32 @@ export default function Navbar({
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Schedule
+              </NavLink>
+
+              <NavLink
+                to="/buzz"
+                className={cn(
+                  "px-4 py-3 rounded-lg transition-colors font-medium",
+                  variant === "hero" && !isScrolled
+                    ? "text-white hover:bg-white/10"
+                    : "text-foreground hover:bg-muted"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Feed
+              </NavLink>
+
+              <NavLink
+                to="/news"
+                className={cn(
+                  "px-4 py-3 rounded-lg transition-colors font-medium",
+                  variant === "hero" && !isScrolled
+                    ? "text-white hover:bg-white/10"
+                    : "text-foreground hover:bg-muted"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                News
               </NavLink>
 
               <div className="pt-2 px-1">

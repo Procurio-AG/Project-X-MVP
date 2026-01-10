@@ -104,7 +104,11 @@ def normalize_match_detail(raw: dict) -> MatchDetail:
         status=data.get("status", "Unknown"),
         venue=data.get("venue", {}),
         toss={
-            "won_by_team_id": data.get("tosswon", {}).get("id"),
+            "won_by_team_id": (
+                data.get("tosswon", {}).get("id")
+                if isinstance(data.get("tosswon"), dict)
+                else None
+            ),
             "elected": data.get("elected")
         },
         scorecard=list(innings_map.values()),

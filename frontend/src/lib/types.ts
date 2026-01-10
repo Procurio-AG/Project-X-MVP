@@ -1,6 +1,6 @@
 // frontend/src/lib/types.ts
 
-export type MatchStatus = "LIVE" | "UPCOMING" | "FINISHED" | "NS" | "Finished" | "Aban.";
+export type MatchStatus = "LIVE" | "UPCOMING" | "FINISHED" | "NS" | "Finished" | "ABAN.";
 
 /* ---------- Core Types ---------- */
 
@@ -49,8 +49,8 @@ export interface InningsScore {
 
 export interface LiveScoreMatch {
   match_id: string;
-  match_status: 'LIVE' | 'FINISHED' | 'NS';
-  innings_phase: 'FIRST_INNINGS' | 'SECOND_INNINGS' | 'COMPLETED' | 'NS';
+  match_status: 'LIVE' | 'FINISHED' | 'NS' | 'ABAN.';
+  innings_phase: 'FIRST_INNINGS' | 'SECOND_INNINGS' | 'COMPLETED' | 'NS' | 'INNINGS_BREAK';
   start_time: string;
   result: string | null;
   teams: {
@@ -136,6 +136,18 @@ export interface MatchEvent {
   timestamp: string;
   inning: number;
   over: number;
+}
+
+export interface NewsArticle {
+  id: number;
+  headline: string;
+  intro?: string | null;
+  context?: string | null;
+  story_type?: string | null;
+  published_at: string; // ISO string
+  match_id?: string | null;
+  image_id?: string | null;
+  image_url?: string | null;
 }
 
 /* ---------- Mock Data Types (Keep for Phase 1) ---------- */

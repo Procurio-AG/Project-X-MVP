@@ -9,10 +9,10 @@ function WaitlistCard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !email || !email.includes("@")) {
       setStatus("error");
-      setMessage("Please enter your name and a valid email address");
+      setMessage("Please enter your name and a valid email.");
       return;
     }
 
@@ -32,18 +32,18 @@ function WaitlistCard() {
 
       if (res.status === 201) {
         setStatus("success");
-        setMessage("You're on the list! We'll be in touch soon.");
+        setMessage("You're in! We’ll reach out when things are ready.");
         setName("");
         setEmail("");
       } else if (res.status === 409) {
         setStatus("error");
-        setMessage("This email is already on the waitlist.");
+        setMessage("Looks like this email is already on the list.");
       } else {
         throw new Error("Unexpected error");
       }
-    } catch (error) {
+    } catch {
       setStatus("error");
-      setMessage("Something went wrong. Please try again.");
+      setMessage("Something went wrong. Please try again in a bit.");
     }
   };
 
@@ -51,18 +51,18 @@ function WaitlistCard() {
     <div className="bg-card border border-border rounded-lg p-8 md:p-12 max-w-4xl mx-auto">
       <div className="text-center mb-8">
         <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Join the Waitlist
+          Want early access?
         </h2>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Get early access to premium features, exclusive insights, and personalized cricket analytics. 
-          Be part of the revolution in cricket coverage.
+          We’re building something for cricket fans who want more than just scores.
+          Join the waitlist to be among the first to try STRYKER.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-xl mx-auto">
         <div className="flex flex-col gap-3 mb-3">
           <div className="relative">
-            <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <input
               type="text"
               value={name}
@@ -70,14 +70,15 @@ function WaitlistCard() {
                 setName(e.target.value);
                 if (status !== "idle") setStatus("idle");
               }}
-              placeholder="Enter your name"
-              className="w-full pl-12 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder:text-muted-foreground"
+              placeholder="Your name"
+              className="w-full pl-12 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground"
               disabled={status === "loading" || status === "success"}
               required
             />
           </div>
+
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <input
               type="email"
               value={email}
@@ -85,19 +86,24 @@ function WaitlistCard() {
                 setEmail(e.target.value);
                 if (status !== "idle") setStatus("idle");
               }}
-              placeholder="Enter your email address"
-              className="w-full pl-12 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder:text-muted-foreground"
+              placeholder="Your email address"
+              className="w-full pl-12 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground"
               disabled={status === "loading" || status === "success"}
               required
             />
           </div>
         </div>
+
         <button
           type="submit"
           disabled={status === "loading" || status === "success"}
           className="w-full px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {status === "loading" ? "Joining..." : status === "success" ? "Joined!" : "Join Now"}
+          {status === "loading"
+            ? "Adding you…"
+            : status === "success"
+            ? "You're on the list"
+            : "Join the waitlist"}
         </button>
 
         {/* Status Messages */}
@@ -116,32 +122,37 @@ function WaitlistCard() {
         )}
 
         <p className="mt-4 text-xs text-muted-foreground text-center">
-          By joining, you agree to receive updates about STRYKER. Unsubscribe anytime.
+          No spam. Just product updates. Unsubscribe anytime.
         </p>
       </form>
 
-      {/* Additional Benefits */}
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-3">
-            <span className="text-2xl">🎯</span>
-          </div>
-          <h3 className="font-semibold text-foreground mb-1">Early Access</h3>
-          <p className="text-sm text-muted-foreground">Be first to try new features</p>
+      {/* Benefits (clean, text-only) */}
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+        <div>
+          <h3 className="font-semibold text-foreground mb-1">
+            Early access
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Try features before public launch.
+          </p>
         </div>
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-3">
-            <span className="text-2xl">📊</span>
-          </div>
-          <h3 className="font-semibold text-foreground mb-1">Exclusive Insights</h3>
-          <p className="text-sm text-muted-foreground">Advanced analytics & predictions</p>
+
+        <div>
+          <h3 className="font-semibold text-foreground mb-1">
+            Smarter insights
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Context and analysis that go beyond raw stats.
+          </p>
         </div>
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-3">
-            <span className="text-2xl">💬</span>
-          </div>
-          <h3 className="font-semibold text-foreground mb-1">Community Access</h3>
-          <p className="text-sm text-muted-foreground">Connect with cricket experts</p>
+
+        <div>
+          <h3 className="font-semibold text-foreground mb-1">
+            Built for fans
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Designed around how serious fans follow the game.
+          </p>
         </div>
       </div>
     </div>

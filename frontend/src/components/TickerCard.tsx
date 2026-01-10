@@ -16,6 +16,7 @@ export default function TickerCard({
   const isLive = match.match_status === "LIVE";
   const isFinished = match.match_status === "FINISHED";
   const isUpcoming = match.match_status === "NS";
+  const isAbandoned = match.match_status === "ABAN.";
 
   const team1 = match.teams.batting_first;
   const team2 = match.teams.batting_second;
@@ -29,15 +30,19 @@ export default function TickerCard({
     ? `/match/${match.match_id}/schedule`
     : `/match/${match.match_id}`;
 
+  // Wrapper switch: disable navigation for abandoned matches
+  const Wrapper: any = isAbandoned ? "div" : Link;
+
   return (
-    <Link
-      to={link}
+    <Wrapper
+      {...(!isAbandoned && { to: link })}
       className={cn(
         "flex-shrink-0 w-[320px] rounded-xl transition-all duration-200",
         "bg-black/30 backdrop-blur-md",
         "border border-white/10",
         "shadow-lg shadow-black/40",
-        "hover:bg-black/65 hover:shadow-xl"
+        !isAbandoned && "hover:bg-black/65 hover:shadow-xl",
+        isAbandoned && "opacity-70 cursor-not-allowed"
       )}
     >
       {/* Header */}
@@ -47,7 +52,8 @@ export default function TickerCard({
             "text-xs font-semibold uppercase tracking-wide",
             isLive && "text-red-500",
             isFinished && "text-gray-200",
-            isUpcoming && "text-orange-400"
+            isUpcoming && "text-orange-400",
+            isAbandoned && "text-yellow-400"
           )}
         >
           {match.match_status}
@@ -79,7 +85,7 @@ export default function TickerCard({
             </span>
           </div>
 
-          {!isUpcoming && (
+          {!isUpcoming && !isAbandoned && (
             <span
               className={cn(
                 "text-sm font-semibold",
@@ -111,7 +117,7 @@ export default function TickerCard({
             </span>
           </div>
 
-          {!isUpcoming && (
+          {!isUpcoming && !isAbandoned && (
             <span
               className={cn(
                 "text-sm font-semibold",
@@ -127,13 +133,14 @@ export default function TickerCard({
 
       {/* Footer */}
       <div className="px-3 py-1.5 border-t border-white/20 text-center text-[11px] text-gray-300">
-        {isFinished && match.result}
+        {isAbandoned && "Match Abandoned"}
+        {isFinished && !isAbandoned && match.result}
         {isUpcoming && formatMatchTime(match.start_time)}
         {isLive &&
           (match.innings_phase === "FIRST_INNINGS"
             ? "1st Innings"
             : "2nd Innings")}
       </div>
-    </Link>
+    </Wrapper>
   );
 }

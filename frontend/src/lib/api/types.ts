@@ -132,14 +132,15 @@ export interface ApiPlayerStatsResponse {
 
 // GET /news (MOCKED)
 export interface ApiNewsItem {
-  news_id: string;
-  title: string;
-  summary: string;
-  source: string;
-  published_at: string;
-  image_url?: string;
+  id: number;
+  headline: string;
+  intro?: string | null;
+  context?: string | null;
+  story_type?: string | null;
+  published_at: string; // ISO string
+  match_id?: string | null;
+  image_id?: string | null;
+  image_url?: string | null;
 }
 
-export interface ApiNewsResponse {
-  news: ApiNewsItem[];
-}
+export type ApiNewsResponse = ApiNewsItem[];

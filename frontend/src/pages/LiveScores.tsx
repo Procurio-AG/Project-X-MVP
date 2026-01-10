@@ -94,35 +94,29 @@ export default function LiveScores() {
       </Helmet>
 
       {/* ---------------- HERO (Schedule-style) ---------------- */}
-      <section className="relative h-[45vh] min-h-[360px] w-full overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1730739463889-34c7279277a9?q=80&w=1600&auto=format&fit=crop"
-            alt="Live cricket"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background/95" />
-
+      <section className="relative h-[30vh] min-h-[280px] w-full overflow-hidden bg-[#F8FAFC]">
+        {/* Background accents to match Firehose */}
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-200/50 to-transparent -z-10" />
+        <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] -z-10" />
+        
         <div className="absolute inset-0 flex items-center z-10">
-          <div className="container-content">
-            <div className="max-w-3xl">
-              <div className="flex items-center gap-3 mb-4">
-                <Radio className="h-6 w-6 text-white" />
-                {liveCount > 0 && (
-                  <span className="text-white/80 uppercase tracking-widest text-xs font-bold">
-                    {liveCount} Live Now
-                  </span>
-                )}
+          <div className="container-content pt-6">
+            <div className="max-w-4xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-lg">
+                  <Radio className="h-5 w-5 text-accent animate-pulse" />
+                </div>
+                <span className="text-accent font-bold tracking-[0.4em] text-[10px] uppercase">
+                  {liveCount > 0 ? `${liveCount} Live Matches` : "Real-time Coverage"}
+                </span>
               </div>
 
-              <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-                Live Scores
+              <h1 className="font-display text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none text-slate-900">
+                Live <span className="text-transparent bg-clip-text bg-gradient-to-b from-slate-400 to-slate-100">Scores</span>
               </h1>
 
-              <p className="text-white/90 text-lg max-w-2xl">
-                Real-time updates from professional matches worldwide.
+              <p className="text-slate-500 max-w-2xl font-medium leading-relaxed text-lg">
+                Real-time updates from professional matches worldwide. Filtered for total coverage.
               </p>
             </div>
           </div>
@@ -130,21 +124,22 @@ export default function LiveScores() {
       </section>
 
       {/* ---------------- CONTENT ---------------- */}
-      <div className="bg-background">
-        <div className="container-content py-16">
-          {/* FILTER + SEARCH */}
-          <div className="bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-6 mb-12">
+      <div className="bg-[#F8FAFC] pb-20">
+        <div className="container-content">
+          {/* FILTER + SEARCH (Editorial Command Style) */}
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200 rounded-2xl p-6 mb-12 shadow-xl shadow-slate-200/50">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-1 p-1 bg-muted rounded-xl w-fit">
+              {/* Status Pills */}
+              <div className="flex items-center gap-1 p-1.5 bg-slate-100 rounded-xl w-fit">
                 {(["ALL", "LIVE", "COMPLETED"] as FilterStatus[]).map((status) => (
                   <button
                     key={status}
                     onClick={() => setFilter(status)}
                     className={cn(
-                      "px-6 py-2 rounded-lg text-sm font-bold transition-all",
+                      "px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300",
                       filter === status
-                        ? "bg-background shadow-sm"
-                        : "text-muted-foreground hover:bg-muted/60"
+                        ? "bg-slate-900 text-white shadow-lg"
+                        : "text-slate-400 hover:text-slate-900 hover:bg-white/50"
                     )}
                   >
                     {status === "ALL" && "All"}
@@ -154,13 +149,14 @@ export default function LiveScores() {
                 ))}
               </div>
 
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              {/* Search Input */}
+              <div className="relative flex-1 max-w-md group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-accent transition-colors" />
                 <input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search teams, leagues, or city…"
-                  className="w-full pl-12 pr-4 py-3 bg-muted border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+                  placeholder="Search (teams, leagues, city)..."
+                  className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent/20 outline-none transition-all"
                 />
               </div>
             </div>
