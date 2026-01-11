@@ -47,8 +47,11 @@ export default function LiveScores() {
         .filter(
           (m: LiveScoreMatch) =>
             m.match_status !== "ABAN." &&
-            (LIVE_PHASES.includes(m.innings_phase) ||
-              m.match_status?.includes("INNINGS"))
+            (
+              LIVE_PHASES.includes(m.innings_phase) ||
+              m.match_status?.includes("INNINGS") ||
+              m.match_status?.toUpperCase() === "INT."
+            )
         )
         .forEach((m) => matches.push({ ...m, _type: "live" }));
     }
