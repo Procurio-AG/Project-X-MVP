@@ -28,7 +28,12 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
 
   const LIVE_PHASES = ["FIRST", "SECOND", "INNINGS_BREAK"];
 
+  const isInterrupted = match.match_status?.toUpperCase() === "INT.";
+  const isDelayed= match.match_status?.toUpperCase() === "DELAYED";
+
   const isLive =
+    isInterrupted ||
+    isDelayed ||
     LIVE_PHASES.includes(match.innings_phase) ||
     match.match_status?.includes("INNINGS");
 
@@ -105,7 +110,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
               <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600" />
             </span>
-            Live
+              {isInterrupted ? "Interrupted" : isDelayed ? "Delayed" : "Live"}
           </span>
         </div>
 

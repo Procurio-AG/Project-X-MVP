@@ -17,9 +17,11 @@ export default function TickerCard({
 
   const LIVE_PHASES = ["FIRST", "SECOND", "INNINGS_BREAK"];
   const isInterrupted = match.match_status?.toUpperCase() === "INT.";
+  const isDelayed= match.match_status?.toUpperCase() === "DELAYED";
 
   const isLive =
     isInterrupted ||
+    isDelayed ||
     LIVE_PHASES.includes(match.innings_phase) ||
     match.match_status?.includes("INNINGS");
 
@@ -120,7 +122,9 @@ export default function TickerCard({
             isLive && "text-red-500",
             isFinished && "text-gray-200",
             isUpcoming && "text-orange-400",
-            isAbandoned && "text-yellow-400"
+            isAbandoned && "text-yellow-400",
+            isDelayed && "text-red-500",
+            isInterrupted && "text-red-500"
           )}
         >
           {match.match_status}
@@ -208,6 +212,7 @@ export default function TickerCard({
             {match.match_status === "2ND INNINGS" && "2nd Innings"}
             {match.match_status === "INNINGS BREAK" && "Innings Break"}
             {match.match_status?.toUpperCase() === "INT." && "Interrupted"}
+            {match.match_status?.toUpperCase() === "DELAYED" && "Delayed"}
           </>
         )}
 

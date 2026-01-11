@@ -88,7 +88,8 @@ export default function Home() {
       (m: LiveScoreMatch) =>
         LIVE_PHASES.includes(m.innings_phase) ||
         m.match_status?.includes("INNINGS") ||
-        m.match_status?.toUpperCase() === "INT."
+        m.match_status?.toUpperCase() === "INT." ||
+        m.match_status?.toUpperCase() === "DELAYED"
     );
 
     const upcomingMatches = liveScoresData.filter(
