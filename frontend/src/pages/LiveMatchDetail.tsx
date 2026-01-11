@@ -28,6 +28,8 @@ type TabType = "commentary" | "scorecard" | "discussion";
 export default function LiveMatchDetail() {
   const { matchId } = useParams<{ matchId: string }>();
   const [activeTab, setActiveTab] = useState<TabType>("commentary");
+  const [showPredictions, setShowPredictions] = useState(false);
+
 
   const matchIdNum = matchId ? parseInt(matchId, 10) : undefined;
 
@@ -172,12 +174,12 @@ export default function LiveMatchDetail() {
               </div>
             </div>
 
-            <HeroTeam
-              name={opponentTeamName}
+           <HeroTeam
+            name={opponentTeamName}
               score={opponentInning?.score}
               overs={opponentInning?.overs}
-              muted={!opponentInning}
-            />
+            muted={!opponentInning}
+          />
           </div>
 
           {/* ================= META ================= */}
@@ -237,6 +239,50 @@ export default function LiveMatchDetail() {
           )}
           {activeTab === "discussion" && (
             <DiscussionTab discussions={discussions || []} />
+          )}
+
+          {/* 📱 Mobile Floating Predictions Button */}
+          <button
+            onClick={() => setShowPredictions(true)}
+            className="
+              fixed
+              bottom-24
+              right-4
+              z-50
+              md:hidden
+              flex items-center gap-2
+              px-4 py-3
+              rounded-full
+              bg-slate-900
+              text-white
+              text-xs
+              font-black
+              uppercase
+              tracking-widest
+              shadow-xl
+            "
+          >
+            Predictions
+          </button>
+
+          {/* 🖥 Desktop: Always visible */}
+          <div className="hidden md:block">
+            <FloatingPredictionsPiP
+              battingTeam={battingTeamName}
+              opponentTeam={opponentTeamName}
+              onClose={() => {}}
+            />
+          </div>
+
+          {/* 📱 Mobile: Controlled via button */}
+          {showPredictions && (
+            <div className="md:hidden">
+              <FloatingPredictionsPiP
+                battingTeam={battingTeamName}
+                opponentTeam={opponentTeamName}
+                onClose={() => setShowPredictions(false)}
+              />
+            </div>
           )}
         </div>
       </div>
@@ -359,30 +405,159 @@ function ScorecardTab({ scorecard }: { scorecard: any }) {
 }
 
 function CommentaryTab({ commentary }: { commentary: CommentaryBall[] }) {
-  if (!commentary.length)
-    return <p className="text-center py-12 opacity-60">Commentary coming soon.</p>;
-
   return (
-    <div className="space-y-3">
-      {commentary.map(ball => (
-        <div key={ball.id} className="flex gap-4">
-          <span className="text-xs font-black text-slate-500">{ball.over}</span>
-          <p className="text-sm font-semibold">{ball.description}</p>
-        </div>
-      ))}
+    <div className="space-y-6">
+      
+      {/* 👇 COMING SOON TAG */}
+      <div className="flex justify-center">
+        <span
+          className="
+            px-3 py-1
+            rounded-full
+            text-[10px]
+            font-black
+            uppercase
+            tracking-widest
+            bg-amber-100
+            text-amber-800
+            border border-amber-300
+          "
+        >
+          Commentary Enhancements Coming Soon
+        </span>
+      </div>
+
+      {/* Existing content */}
+      {!commentary.length ? (
+        <p className="text-center py-12 opacity-60">
+          Commentary coming soon.
+        </p>
+      ) : (
+        commentary.map(ball => (
+          <div key={ball.id} className="flex gap-4">
+            <span className="text-xs font-black text-slate-500">
+              {ball.over}
+            </span>
+            <p className="text-sm font-semibold">
+              {ball.description}
+            </p>
+          </div>
+        ))
+      )}
     </div>
   );
 }
 
-function DiscussionTab({ discussions }: { discussions: DiscussionPost[] }) {
-  if (!discussions.length)
-    return <p className="text-center py-12 opacity-60">No discussions yet.</p>;
 
+function DiscussionTab({ discussions }: { discussions: DiscussionPost[] }) {
   return (
     <div className="space-y-4">
-      {discussions.map(post => (
-        <DiscussionCard key={post.id} post={post} />
-      ))}
+
+      {/* 👇 COMING SOON LINE */}
+      <p
+        className="
+          mx-auto
+          w-fit
+          px-4 py-1.5
+          rounded-full
+          text-[10px]
+          font-black
+          uppercase
+          tracking-widest
+          bg-amber-100
+          text-amber-800
+          border border-amber-300
+          text-center
+        "
+      >
+        Advanced Discussion Features Coming Soon
+      </p>
+
+      {!discussions.length ? (
+        <p className="text-center py-12 opacity-60">
+          No discussions yet.
+        </p>
+      ) : (
+        discussions.map(post => (
+          <DiscussionCard key={post.id} post={post} />
+        ))
+      )}
+    </div>
+  );
+}
+
+
+function FloatingPredictionsPiP({
+  battingTeam,
+  opponentTeam,
+  onClose,
+}: {
+  battingTeam: string;
+  opponentTeam: string;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="
+        fixed
+        bottom-24 md:bottom-6
+        right-3 md:right-6
+        z-50
+        w-[280px]
+      "
+    >
+      <div className="relative bg-white/95 backdrop-blur-xl border border-slate-200 rounded-3xl shadow-2xl p-5">
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+            Predictions
+          </span>
+          <span className="px-2 py-0.5 text-[9px] font-black uppercase rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+            Coming Soon
+          </span>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="md:hidden text-xs font-black text-slate-500 hover:text-slate-900"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* Predictions */}
+        <div className="space-y-3 text-sm">
+          <PiPRow label="Winner" value={battingTeam} />
+          <PiPRow label="Runs" value="190 - 250" />
+          <PiPRow label="Top Scorer" value="Opener" />
+          <PiPRow label="Sixes" value="14 - 18" />
+        </div>
+
+        {/* Footer */}
+        <p className="mt-4 text-[10px] text-center text-slate-500 italic">
+          Experimental fan predictions
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PiPRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+        {label}
+      </span>
+      <span className="font-extrabold text-slate-900">
+        {value}
+      </span>
     </div>
   );
 }

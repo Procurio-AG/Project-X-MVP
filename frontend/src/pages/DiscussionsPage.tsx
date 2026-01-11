@@ -93,6 +93,21 @@ export default function DiscussionsPage({ matchId = "66709" }: DiscussionsPagePr
                       Tactical Live Stream
                     </p>
                   </div>
+                  {/* 👇 COMING SOON TAG */}
+                  <span className="
+                    px-2 py-0.5
+                    rounded-full
+                    text-[9px]
+                    font-black
+                    uppercase
+                    tracking-widest
+                    bg-amber-100
+                    text-amber-800
+                    border border-amber-300
+                    whitespace-nowrap
+                  ">
+                    Coming Soon
+                  </span>
                 </div>
               </div>
 
@@ -120,6 +135,20 @@ export default function DiscussionsPage({ matchId = "66709" }: DiscussionsPagePr
                       Community Analysis
                     </p>
                   </div>
+                  <span className="
+                    px-2 py-0.5
+                    rounded-full
+                    text-[9px]
+                    font-black
+                    uppercase
+                    tracking-widest
+                    bg-amber-100
+                    text-amber-800
+                    border border-amber-300
+                    whitespace-nowrap
+                  ">
+                    Coming Soon
+                  </span>
                 </div>
               </div>
 
