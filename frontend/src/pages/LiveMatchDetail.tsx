@@ -116,14 +116,14 @@ export default function LiveMatchDetail() {
 
         <div className="relative z-10 container mx-auto px-4 pt-16 pb-24">
 
-          {/* Back */}
+          {/* Back
           <Link
             to="/live"
             className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-900 mb-12"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Live Scores
-          </Link>
+          </Link> */}
 
           {/* ================= HERO SCOREBOARD (FIXED OVERLAP) ================= */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 lg:gap-16 mb-12 pb-12 border-b border-slate-200/40">
