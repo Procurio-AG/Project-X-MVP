@@ -20,7 +20,12 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
 
   const LIVE_PHASES = ["FIRST", "SECOND", "INNINGS_BREAK"];
 
+  const isInterrupted = match.match_status?.toUpperCase() === "INT.";
+  const isDelayed= match.match_status?.toUpperCase() === "DELAYED";
+
   const isLive =
+    isInterrupted ||
+    isDelayed ||
     LIVE_PHASES.includes(match.innings_phase) ||
     match.match_status?.includes("INNINGS");
 
@@ -109,7 +114,7 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
               </span>
               <span className="text-red-600 dark:text-red-500 text-sm font-bold uppercase tracking-wider">
-                LIVE
+                {isInterrupted ? "Interrupted" : isDelayed ? "Delayed" : "Live"}
               </span>
             </>
           )}
@@ -154,7 +159,9 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
             <p className="font-semibold text-lg">{team1.name}</p>
             {!isUpcoming && (
               <p className="text-muted-foreground">
-                {team1Score
+                {isInterrupted
+                  ? "--"
+                  : team1Score
                   ? `${team1Score.score} (${team1Score.overs})`
                   : "Yet to bat"}
               </p>
@@ -180,11 +187,14 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
           <div>
             <p className="font-semibold text-lg">{team2.name}</p>
             {!isUpcoming && (
-              <p className="text-muted-foreground">
-                {team2Score
-                  ? `${team2Score.score} (${team2Score.overs})`
-                  : "Yet to bat"}
-              </p>
+            <p className="text-muted-foreground">
+              {isInterrupted
+                ? "--"
+                : team2Score
+                ? `${team2Score.score} (${team2Score.overs})`
+                : "Yet to bat"}
+            </p>
+
             )}
           </div>
         </div>
@@ -212,9 +222,12 @@ export default function FeaturedMatchCard({ match }: FeaturedMatchCardProps) {
             {match.match_status === "1ST INNINGS" && "1st Innings"}
             {match.match_status === "2ND INNINGS" && "2nd Innings"}
             {match.match_status === "INNINGS BREAK" && "Innings Break"}
+            {match.match_status?.toUpperCase() === "INT." && "Interrupted"}
+            {match.match_status?.toUpperCase() === "DELAYED" && "Delayed"}
           </p>
         </div>
       )}
+
 
     </Link>
   );

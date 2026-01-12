@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { NavLink } from "./NavLink";
-import { Menu, X } from "lucide-react";
+import { Menu, X , Home} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavbarProps {
@@ -89,8 +89,23 @@ export default function Navbar({
             </button>
           </div>
 
-          {/* Mobile Join Waitlist Button */}
-          <div className="md:hidden">
+          {/* Mobile Actions (Home + Join) */}
+          <div className="md:hidden flex items-center gap-2">
+            {/* Home Icon */}
+            <NavLink
+              to="/"
+              className={cn(
+                "p-2 transition-colors",
+                isScrolled
+                  ? "text-foreground hover:text-foreground/80"
+                  : "text-white hover:text-white/80"
+              )}
+              aria-label="Home"
+            >
+              <Home className="h-5 w-5" />
+            </NavLink>
+
+            {/* Join Waitlist */}
             <button
               onClick={handleWaitlistClick}
               className={cn(

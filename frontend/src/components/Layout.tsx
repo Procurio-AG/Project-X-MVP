@@ -55,10 +55,26 @@ export default function Layout() {
               <h4 className="font-semibold text-foreground mb-3">
                 Quick Links
               </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="grid grid-cols-2 gap-x-6 gap-y-1
+                            text-sm text-muted-foreground">
                 <li>
                   <Link to="/live" className="hover:text-foreground">
                     Live Scores
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/buzz" className="hover:text-foreground">
+                    Trending Feed
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/news" className="hover:text-foreground">
+                    News
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/chatroom" className="hover:text-foreground">
+                    Chatroom
                   </Link>
                 </li>
                 <li>

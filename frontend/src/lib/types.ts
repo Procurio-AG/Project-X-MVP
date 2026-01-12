@@ -49,7 +49,7 @@ export interface InningsScore {
 
 export interface LiveScoreMatch {
   match_id: string;
-  match_status: 'LIVE' | 'FINISHED' | 'NS' | 'ABAN.';
+  match_status: 'LIVE' | 'FINISHED' | 'NS' | 'ABAN.' | 'Int.' | 'INT.';
   innings_phase: 'FIRST_INNINGS' | 'SECOND_INNINGS' | 'COMPLETED' | 'NS' | 'INNINGS_BREAK';
   start_time: string;
   result: string | null;
