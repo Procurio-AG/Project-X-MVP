@@ -1,290 +1,233 @@
 # Project X - Live Cricket Platform (MVP)
 
-A production-ready, API-first web platform delivering **live cricket scores, match schedules, and detailed match insights**, built with reliability, clean architecture, and scalability in mind.
+## Project Overview
 
-> **Phase 1 goal**: Ship a fast, stable MVP suitable for investor demos and early users, while keeping the backend extensible for long-term growth.
-
----
-
-## Features (Phase 1)
-
-### Live Scores
-
-* Real-time match updates (polling-based)
-* Clean match cards with score, overs, run rate, and status
-* Auto-refresh without manual reload
-
-### Match Schedule
-
-* Upcoming fixtures
-* UTC-based timestamps (frontend converts to US timezones)
-* Filters by team, tournament, and date
-
-### Match Detail Page
-
-* Ball-by-ball commentary (current innings)
-* Live batsman & bowler statistics
-* Full scorecard
-
-### User Engagement
-
-* Email waitlist signup (name + email)
-* Social sharing (frontend)
-* “Discuss” UI (frontend mock only)
-
-### Deployment
-
-* Live backend deployed on **Vercel**
-* Clean, modular, production-grade codebase
-
----
-
-## Architecture Overview
-
-This project follows a **decoupled, API-first architecture**.
-
-```
-Frontend (Next.js / React)
-        ↓
-REST API (FastAPI)
-        ↓
-Service Layer
-        ↓
-Domain Models
-        ↓
-Infrastructure
-(PostgreSQL | Redis | External Cricket API)
-```
-
-### Why this architecture?
-
-* Enables parallel frontend and backend development
-* Clean separation of concerns
-* Investor-ready and scalable
-* Easy to evolve into mobile apps or additional clients
+Project X MVP is a production-grade cricket match experience platform designed around a match-centric user journey. The system provides structured access to live and historical match data with a strong focus on performance, reliability, and extensibility. The architecture separates a modern React frontend from a FastAPI backend that ingests, normalizes, and serves cricket data from external providers.
 
 ---
 
 ## Tech Stack
 
+**Frontend**
+
+- Vite
+    
+- React
+    
+- TypeScript
+    
+- React Router
+    
+- TanStack React Query
+    
+- Tailwind CSS
+    
+- shadcn/ui
+    
+
+**Backend**
+
+- FastAPI
+    
+- SQLAlchemy
+    
+- Alembic
+    
+- Redis
+    
+
+**Database and Infrastructure**
+
+- PostgreSQL (Supabase)
+    
+- Redis (Upstash)
+    
+- Supabase Cron Jobs
+    
+
+**External Services**
+
+- SportMonks Cricket API
+    
+- Resend (Email)
+    
+
+---
+
+## Setup Instructions
+
+### High-Level Setup Flow
+
+1. Set up required external services (Supabase, Upstash, SportMonks).
+    
+2. Configure backend environment variables and run database migrations.
+    
+3. Start the FastAPI backend server.
+    
+4. Configure frontend environment variables and start the Vite dev server.
+    
+
+---
+
+### Backend Setup
+
+1. Create and activate a Python virtual environment.
+    
+2. Install dependencies:
+    
+    ```
+    pip install -r requirements.txt
+    ```
+    
+3. Create a `.env` file in `backend/` and populate it using the environment variables listed below.
+    
+
+#### How to obtain backend environment variables
+
+- **DATABASE_URL**
+    
+    - Create a Supabase project.
+        
+    - Use the provided PostgreSQL connection string.
+        
+    - Can be replaced with a local Postgres URL if needed.
+        
+- **REDIS_URL**
+    
+    - Create a Redis instance on Upstash.
+        
+    - Use the provided connection URL.
+        
+- **EXTERNAL_API_KEY**
+    
+    - Obtain an API key from SportMonks.
+        
+- **EXTERNAL_API_BASE_URL**
+    
+    - Use the SportMonks REST API base URL.
+        
+- **Optional keys**
+    
+    - Resend for transactional email.
+        
+    - Social platform keys if related features are enabled.
+        
+
+4. Run database migrations:
+    
+    ```
+    alembic upgrade head
+    ```
+    
+5. Start the backend server:
+    
+    ```
+    uvicorn app.main:app --reload
+    ```
+    
+
+The backend will be available at `http://localhost:8000`.
+
+---
+
+### Frontend Setup
+
+1. Install dependencies:
+    
+    ```
+    npm install
+    ```
+    
+2. Create a `.env` file in `frontend/`:
+    
+    ```
+    VITE_API_BASE_URL=http://localhost:8000
+    ```
+    
+3. Start the development server:
+    
+    ```
+    npm run dev
+    ```
+    
+
+---
+
+## Environment Variables
+
 ### Backend
 
-* **Language**: Python 3.11
-* **Framework**: FastAPI
-* **Database**: PostgreSQL
-* **Cache**: Redis
-* **ORM**: SQLAlchemy 2.0
-* **Migrations**: Alembic
-* **HTTP Client**: httpx (async)
-* **Deployment**: Vercel (Serverless)
-* **Logging**: Python logging (basic)
+- `DATABASE_URL`  
+    PostgreSQL connection string (Supabase or local Postgres).
+    
+- `REDIS_URL`  
+    Redis connection URL (Upstash).
+    
+- `EXTERNAL_API_KEY`  
+    API key for SportMonks.
+    
+- `EXTERNAL_API_BASE_URL`  
+    Base URL for the SportMonks REST API.
+    
+- `CORS_ORIGINS`  
+    Allowed frontend origins.
+    
+- `RESEND_API_KEY`  
+    API key for transactional emails.
+    
+- `CRON_SECRET`  
+    Secret for securing scheduled or internal cron-triggered tasks.
+    
+- `RAPID_API_KEY`  
+    Optional key for additional integrations.
+    
+- `TWITTER_HOST`  
+    Social provider configuration.
+    
+- `YOUTUBE_API_KEY`  
+    API key for YouTube integrations.
+    
 
-### Frontend (separate repo)
+### Frontend
 
-* React / Next.js
-* API-driven (no backend rendering)
-
----
-
-## Backend Responsibilities
-
-The backend:
-
-* Polls third-party cricket data providers
-* Normalizes and caches live match data
-* Exposes stable REST APIs
-* Stores user email signups
-* Handles failures gracefully
-
-The backend **does not**:
-
-* Render UI
-* Manage real comments (Phase 1)
-* Push WebSocket updates (polling only)
-* Permanently store historical ball-by-ball data
-
----
-
-## Live Data Flow
-
-```
-Scheduler (Polling)
-   ↓
-External Cricket API
-   ↓
-Normalization Layer
-   ↓
-Redis Cache (Live Match State)
-   ↓
-REST APIs
-   ↓
-Frontend
-```
-
-* Polling interval: ~30–45 seconds
-* Redis protects against API rate limits
-* PostgreSQL stores only persistent data (emails, metadata)
+- `VITE_API_BASE_URL`  
+    Backend API base URL.  
+    Defaults to `http://localhost:8000` if not set.
+    
 
 ---
 
-## Project Structure
+## Known Limitations
 
-```
-backend/
-│
-├── app/
-│   ├── main.py
-│   │
-│   ├── api/
-│   │   └── routes/
-│   │       ├── matches.py
-│   │       ├── engagement.py
-│   │       └── health.py
-│   │
-│   ├── services/
-│   │   ├── polling_service.py
-│   │   ├── match_service.py
-│   │   └── email_service.py
-│   │
-│   ├── domain/
-│   │   ├── match.py
-│   │   └── score.py
-│   │
-│   ├── infrastructure/
-│   │   ├── db.py
-│   │   ├── redis.py
-│   │   └── external_api.py
-│   │
-│   ├── models/
-│   │   └── email.py
-│   │
-│   ├── core/
-│   │   ├── config.py
-│   │   └── logging.py
-│   │
-│   └── tests/
-│       ├── test_matches.py
-│       └── test_email.py
-│
-├── alembic/
-└── requirements.txt
-```
+- **External Data Provider Abstraction**  
+    The system is currently integrated with SportMonks. Provider-specific logic is isolated in normalizer services, so switching providers requires changes only in the normalization layer.
+    
+- **Polling-Based Data Freshness**  
+    Live and historical match data is refreshed using polling. This is sufficient for the current MVP and demo use cases but can be upgraded to webhook-based ingestion in the future.
+    
+- **Redis-Centric Caching Strategy**  
+    Redis mitigates external API rate limits and enables high-speed, large-scale reads with near-zero latency for frontend consumption.
+    
+- **Database Hygiene via Cron Jobs**  
+    Supabase cron jobs are required to clean up old match and news data to prevent database bloat. These jobs must be recreated when setting up a new Supabase project.
+    
+- **Observability and Testing**  
+    Automated test coverage and production-grade monitoring are limited and should be expanded as the system scales.
+    
 
 ---
 
-## API Overview
+## Next Steps and Future Work
 
-Base path:
-
-```
-/api/v1
-```
-
-### Live Matches
-
-```
-GET /matches/live
-```
-
-### Match Schedule
-
-```
-GET /matches/schedule
-```
-
-### Match Detail
-
-```
-GET /matches/{match_id}
-```
-
-### Email Signup
-
-```
-POST /engagement/email
-```
-
-Payload:
-
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com"
-}
-```
-
-### Health Check
-
-```
-GET /health
-```
-
----
-
-## Testing Strategy
-
-Phase-1 testing focuses on **critical reliability paths**:
-
-* Email signup validation
-* Match API response structure
-* Redis cache fallback logic
-
-Advanced testing (load, E2E) is planned post-MVP.
-
----
-
-## Environment Setup
-
-### Environment Variables
-
-```
-DATABASE_URL=
-REDIS_URL=
-EXTERNAL_API_KEY=
-```
-
-* All timestamps are stored in **UTC**
-* Frontend handles timezone conversion (EST / PST / CST)
-
----
-
-## Deployment
-
-* Backend deployed as a **serverless FastAPI app on Vercel**
-* Managed PostgreSQL & Redis
-* Separate **dev** and **prod** environments
-
----
-
-## Roadmap (Post-MVP)
-
-* WebSocket-based real-time updates
-* User accounts & personalization
-* Push notifications
-* Mobile app clients
-* Analytics & insights
-* Paid subscription tiers
-
----
-
-## Ownership & Contribution
-
-* Phase 1 maintained by a single backend engineer
-* Codebase structured for easy onboarding
-* Contributions welcome after MVP stabilization
-
----
-
-## References
-
-* **FastAPI Documentation** - Sebastián Ramírez
-  [https://fastapi.tiangolo.com/](https://fastapi.tiangolo.com/)
-
-* **SQLAlchemy 2.0 ORM Guide** - SQLAlchemy Project
-  [https://docs.sqlalchemy.org/en/20/](https://docs.sqlalchemy.org/en/20/)
-
-* **Redis Caching Patterns** - Redis Ltd.
-  [https://redis.io/docs/latest/develop/use-cases/](https://redis.io/docs/latest/develop/use-cases/)
-
-* **The Twelve-Factor App** - Heroku
-  [https://12factor.net/](https://12factor.net/)
+- **Live Commentary and Chat**  
+    Replace mocked data with real-time or near-real-time feeds using WebSockets or streaming-based delivery, with moderation and persistence support.
+    
+- **Predictions**  
+    Replace frontend-only mock predictions with an external data source or internal heuristic model. Persist predictions and outcomes while maintaining clear Beta labeling.
+    
+- **Data Ingestion Improvements**  
+    Introduce webhook-based ingestion where supported to reduce reliance on polling and external API calls during peak traffic.
+    
+- **Scalability and Reliability**  
+    Separate ingestion into background workers, add structured logging and monitoring, and expand automated test coverage.
+    
